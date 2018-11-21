@@ -101,11 +101,6 @@ export default {
   },
   created() {
     this.tag=localStorage.getItem("tag")    
-    // if (localStorage.getItem("tag") == 0) {
-    //   this.isshow = true;
-    // } else if (this.tag == 1) {
-    //   this.isshow = false;
-    // }
     this.getData();
   },
   mounted() {

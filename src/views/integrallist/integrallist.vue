@@ -4,13 +4,13 @@
             <!-- tab切换 -->
             <div slot="header" class='header'>
                 <el-button-group>
+                  <!-- 循环对象{} -->
                     <el-button 
                     v-for='(val,key,index) in types' 
                     :key="index"
                     :class="{active:index==dynamic}" 
                     type="primary" 
-                    @click='luckraw(key)' 
-                    >
+                    @click='luckraw(key)'>
                     {{val}}
                     </el-button>                
                 </el-button-group>
@@ -127,8 +127,8 @@ export default {
   data() {
     return {
       tab: "",
-      types: {}, //默认为1
-      type: 1,
+      types: {},
+      type: "",
       dynamic: 0,
       dataList: [],
       join_num: "", //加入人数
@@ -148,15 +148,25 @@ export default {
     this.getData();
   },
   methods: {
-    //Tab切换
+    //Tab切换获取tab的值
     getTab() {
       this.$axios.get("api/admin/integral_Info").then(res => {
         this.types = res.data.type;
+        let obj = res.data.type;
+        var arr = [];
+        for (let i in obj) {
+          arr.push({
+            key: i,
+            val: obj[i]
+          });
+        }
+        this.type = arr[0].key;//默认选中tab的第一个即返回数据的第一条
+        this.getData();
       });
     },
     //Tab切换
     luckraw(key, index) {
-      if (index == 1) {
+      if (index == this.type) {
         this.dynamic = index;
       }
       //点击添加字体颜色，其他的删除class名称
@@ -171,19 +181,20 @@ export default {
           params: {
             page: this.page,
             title: this.title,
-            type:this.type
+            type: this.type
           }
         })
         .then(res => {
-          console.log(res)
           this.dataList = res.data.integral_Lists.data;
-          for(let i=0;i<this.dataList.length;i++){
+          for (let i = 0; i < this.dataList.length; i++) {
             this.join_num = this.dataList[i].join_num;
             this.people_num = this.dataList[i].people_num;
-            this.dataList[i].price = this.dataList[i].price/100;
-            this.dataList[i].cost = this.dataList[i].cost/100;
-          }                   
-          if (res.data.integral_Lists.total < res.data.integral_Lists.per_page) {
+            this.dataList[i].price = this.dataList[i].price / 100;
+            this.dataList[i].cost = this.dataList[i].cost / 100;
+          }
+          if (
+            res.data.integral_Lists.total < res.data.integral_Lists.per_page
+          ) {
             this.pagination = false;
           } else {
             this.pagination = true;
@@ -202,7 +213,7 @@ export default {
         .get("/api/admin/integral_Lists", {
           params: {
             page: current_page,
-            type:this.type
+            type: this.type
           }
         })
         .then(res => {
@@ -215,12 +226,12 @@ export default {
       this.$router.push({ name: "addluck", query: { type: this.type } });
     },
     handleopen(index, row) {
-        this.$axios({
-          method: "post",
-          url: "api/admin/open_Integral/" + row.id
-        }).then(res => {
-          console.log(res);
-        });
+      this.$axios({
+        method: "post",
+        url: "api/admin/open_Integral/" + row.id
+      }).then(res => {
+        console.log(res);
+      });
     }
   }
 };
