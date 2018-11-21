@@ -81,9 +81,10 @@
             </el-pagination>
           </div>
           <div style="float:left">
+            <el-badge :value="multipleSelectionAll.length" :max="10"  :hidden='istrue' class="item" style='margin-right:20px'>
+               <el-button type="primary" size="small" @click="handleChooseData">批量代购</el-button>
+            </el-badge>
             <!-- <el-checkbox @change="toggleSelect(data)" size="mini" style='margin-right:40px'>全选/反选</el-checkbox> -->
-            <el-button type="primary" size="small" @click="handleChooseData">获取选中的内容</el-button>
-            <el-button type="primary" size="small" @click='batchPurchase(tableData)'   >批量代购</el-button>
             <el-button type="primary" size="small" @click='allPurchase'>一键代购</el-button>
           </div>
         </div>        
@@ -101,6 +102,7 @@ export default {
   components: { Buy },
   data() {
     return {
+      istrue:true,
       multipleSelectionAll: [], // 所有选中的数据包含跨页数据
       multipleSelection: [], // 当前页选中的数据
       idKey: "id", // 标识列表数据中每一行的唯一键的名称(需要按自己的数据改一下)
@@ -113,7 +115,7 @@ export default {
         per_page: 0, //前一页
         layout: "total, sizes, prev, pager, next, jumper"
       },
-      title: ""
+      title: "",//搜索
     };
   },
   created() {
@@ -125,12 +127,19 @@ export default {
     handleChooseData() {
       // 获取之前需要执行一遍记忆分页处理
       this.changePageCoreRecordData();
-      this.$alert(`选中条数为:${this.multipleSelectionAll.length}`, "提示", {
-        confirmButtonText: "确定",
-        callback: action => {
-          alert(JSON.stringify(this.multipleSelectionAll));
-        }
-      });
+      //如果选择总数大于0出现红色数量圆点 默认不出现
+      if(this.multipleSelectionAll.length>0){
+        this.istrue=false
+      }
+      console.log(this.multipleSelectionAll)//已经代购的后期要过滤掉的数组
+      // this.$alert(`批量代购的数量为:${this.multipleSelectionAll.length}`, "代购数量", {
+      //   confirmButtonText: "批量代购",
+      //   callback: action => {
+      //     //可以调接口进行批量代购
+      //     alert(JSON.stringify(this.multipleSelectionAll));
+      //     console.log(1)
+      //   }
+      // });
     },
     // 设置选中的方法
     setSelectRow() {
@@ -205,6 +214,7 @@ export default {
     handleSelectionChange(val) {
       // table组件选中事件,记得加上@selection-change="handleSelectionChange"
       this.multipleSelection = val;
+      this.handleChooseData()
     },
     //分页切换
     handleCurrentChanges(val) {
@@ -238,12 +248,7 @@ export default {
         });
         this.allSelect = !this.allSelect;
       }
-    },
-    //批量代购当前页面 并将所选ID放入临时数组ids方便以后排除
-    batchPurchase(index, row) {
-      // this.tempArr=this.ids;//引用
-      console.log(this.tempArr);
-    },
+    },    
     //一键代购 全部
     allPurchase(index, row) {
       // console.log(row.id)

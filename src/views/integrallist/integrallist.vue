@@ -152,16 +152,16 @@ export default {
     getTab() {
       this.$axios.get("api/admin/integral_Info").then(res => {
         this.types = res.data.type;
-        let obj = res.data.type;
+        //转数组取第一条数据赋值给默认现实的数据type
         var arr = [];
-        for (let i in obj) {
+        for (let i in res.data.type) {
           arr.push({
             key: i,
-            val: obj[i]
+            val: res.data.type[i]
           });
         }
         this.type = arr[0].key;//默认选中tab的第一个即返回数据的第一条
-        this.getData();
+        this.getData();//将type传入获取数据
       });
     },
     //Tab切换
@@ -222,9 +222,11 @@ export default {
         })
         .catch(err => console.log(err));
     },
+    //添加积分
     addluck() {
       this.$router.push({ name: "addluck", query: { type: this.type } });
     },
+    //开奖
     handleopen(index, row) {
       this.$axios({
         method: "post",

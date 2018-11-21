@@ -4,6 +4,7 @@
       title="选择代销商户"
       :visible.sync="centerDialogVisible"
       :close-on-click-modal=false
+      :show-close=false
       width="70%"
       center>
       <!-- 三级联动 -->
@@ -179,9 +180,7 @@ export default {
         .get("api/admin/wholesalers_List", {
           params: {
             region_id: this.form.region_id[this.form.region_id.length - 1], //只取最后一位  字符串
-            industry_id: this.form.industry_id[
-              this.form.industry_id.length - 1
-            ],
+            industry_id: this.form.industry_id[this.form.industry_id.length - 1],
             title: this.form.title
           }
         })
