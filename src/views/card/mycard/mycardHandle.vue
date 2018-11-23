@@ -54,11 +54,18 @@
                         <el-input v-model="form.amount" placeholder="减多少元" type='number'></el-input>
                     </el-col>
                 </el-form-item>                        
-                <el-form-item label="优惠券期限" prop='dat'>
-                    <el-radio-group v-model="form.dat">
+                <el-form-item label="是否有期限" prop='dat'>
+                  <el-switch
+                    v-model="form.dat"
+                    active-color="#66b1ff"
+                    active-value=1
+                    inactive-value=0
+                    inactive-color="#ccc">
+                  </el-switch>
+                    <!-- <el-radio-group v-model="form.dat">
                         <el-radio :label="0" :value='form.dat'>不限制</el-radio>
                         <el-radio :label="1" :value='form.dat'>有限制</el-radio>                    
-                    </el-radio-group>
+                    </el-radio-group> -->
                 </el-form-item>
                 <template v-if='form.dat==1'>
                     <el-form-item label='开始时间' prop='begin_time'>                 
@@ -88,11 +95,18 @@
                         </div>       
                     </el-form-item>
                 </template>                
-                <el-form-item label="优惠券使用" prop='usetype'>
-                    <el-radio-group v-model="form.usetype">
+                <el-form-item label="是否限制商品" prop='usetype'>
+                   <el-switch
+                    v-model="form.usetype"
+                    active-color="#66b1ff"
+                    active-value=2
+                    inactive-value=1
+                    inactive-color="#ccc">
+                  </el-switch>
+                    <!-- <el-radio-group v-model="form.usetype">
                         <el-radio :label="1" :value='form.usetype'>不限制</el-radio>
                         <el-radio :label="2" :value='form.usetype'>有限制</el-radio>                    
-                    </el-radio-group>
+                    </el-radio-group> -->
                 </el-form-item>
                 <el-form-item label="选择商品" v-if='form.usetype==2' prop='sku_goods'>
                   <el-button type="text" @click="goodChoose">编辑商品</el-button> 

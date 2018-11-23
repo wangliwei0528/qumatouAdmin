@@ -32,17 +32,7 @@ import Axios from 'axios'
 Vue.prototype.$axios = Axios;
 import {Loading,Message} from 'element-ui'
 
-//判断token过期
-// Vue.prototype.date = function () {
-//   let date = localStorage.getItem('date')
-//   let currDate = new Date().getTime() / 1000
-//   if (currDate > date) {
-//     window.localStorage.clear('token')
-//     router.replace({
-//       path: '/' // 到登录页重新获取token
-//     })
-//   }
-// };
+
 //拦截器
 let loadinginstace
 let date = localStorage.getItem('date')

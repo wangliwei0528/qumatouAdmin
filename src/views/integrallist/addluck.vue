@@ -53,7 +53,7 @@
             <el-form-item label="所需人数" prop='people_num'>
                 <el-input v-model="form.people_num" placeholder="请输入商品所需人数" type='number' :min="1"></el-input>
             </el-form-item>
-            <el-form-item label="详情" prop='details'>
+            <el-form-item label="商品详情" prop='details'>
                 <tinymce v-model="form.details"></tinymce>
             </el-form-item>
             <el-form-item label="价格" prop='price' v-if='type==2'>
@@ -77,7 +77,7 @@ export default {
       img: "",
       files: "",
       fileList: [],
-      header: { token: localStorage.getItem("token") },
+      header: {},
       dialogImageUrl: "",
       dialogVisible: false,
       form: {

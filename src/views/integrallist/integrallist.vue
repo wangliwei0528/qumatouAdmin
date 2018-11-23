@@ -126,6 +126,7 @@ export default {
   components: { Mycomponent },
   data() {
     return {
+      isshow: true,
       tab: "",
       types: {},
       type: "",

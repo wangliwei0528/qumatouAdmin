@@ -53,7 +53,7 @@
                   </div> 
                   <!-- 商户结束 -->
                   <!-- 分页开始 -->
-                  <div class="block" v-if="pagination">
+                  <div class="block" v-show='list.length>10'>
                     <el-pagination
                           @current-change="handleCurrentChanges"
                           :current-page="currentPage"
@@ -99,7 +99,6 @@ export default {
       pagesize: 10, //每页显示的数据
       page: 1, //当前页第一页
       per_page: 0, //前一页
-      pagination: false //分页器
     };
   },
   created() {
@@ -180,19 +179,14 @@ export default {
         .get("api/admin/wholesalers_List", {
           params: {
             region_id: this.form.region_id[this.form.region_id.length - 1], //只取最后一位  字符串
-            industry_id: this.form.industry_id[this.form.industry_id.length - 1],
+            industry_id: this.form.industry_id[
+              this.form.industry_id.length - 1
+            ],
             title: this.form.title
           }
         })
         .then(res => {
-          this.list = res.data.wholesalers_List.data;
-          if (
-            res.data.wholesalers_List.total < res.data.wholesalers_List.per_page
-          ) {
-            this.pagination = false;
-          } else {
-            this.pagination = true;
-          }
+          this.list = res.data.wholesalers_List.data;          
           this.total = res.data.wholesalers_List.total;
           this.per_page = res.data.wholesalers_List.per_page;
         }); //批发商列表
@@ -226,30 +220,33 @@ export default {
     // },
     //确定提交
     onSubmit() {
-      this.$axios({
-        method: "post",
-        url: "api/admin/Goods_List",
-        data: {
-          wholes_id: this.form.check,
-          page: this.currentPage,
-          title: this.title
-        }
-      })
-        .then(res => {
-          if (res.data.status == 1&&res.data.goos_List.data!='') {
-            this.$emit("listenChild", res); //向父组件传值
-            this.centerDialogVisible = false;
-          } else {
-            this.$message({
-              message: '请选择代销商户',
-              type: 'warning'
-            });
-            this.centerDialogVisible = true;
+     //如果没有选择商户提醒选择商户
+      if (this.form.check!='') {
+        this.$axios({
+          method: "post",
+          url: "api/admin/Goods_List",
+          data: {
+            wholes_id: this.form.check,
+            page: this.currentPage,
+            title: this.title
           }
         })
-        .catch(err => {
-          console.log(err);
+          .then(res => {
+            if (res.data.status == 1) {
+              this.$emit("listenChild", res); //向父组件传值
+              this.centerDialogVisible = false;
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      } else {
+        this.$message({
+          message: "请选择代销商户",
+          type: "warning"
         });
+        this.centerDialogVisible = true;
+      }
     }
   }
 };

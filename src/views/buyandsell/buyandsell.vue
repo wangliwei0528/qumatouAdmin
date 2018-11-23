@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Buy @listenChild='showMsgFromChild' :title='title' ref="childMethod"/>
+    <Buy @listenChild='queryData' :title='title' ref="childMethod"/>
     <el-card class="box-card">
         <div slot="header" class='header'>
           <span>代购商品列表</span>            
@@ -23,10 +23,12 @@
           border
           tooltip-effect="dark"
           style="width: 100%"
+          :row-key="getRowKeys"
           @selection-change="handleSelectionChange">
           <el-table-column
             type="selection"
             width="55"
+            :reserve-selection="true"
             align="center">
           </el-table-column>
           <el-table-column
@@ -69,19 +71,19 @@
           </el-table-column>          
         </el-table>
         <div style='margin:20px 0;'>
-          <div style='float:right' v-show='tableData.length>10'>
+          <div style='float:right' v-if="tableData.length>10">
             <el-pagination 
-                :page-size="pagination.pageSize"
-                @current-change="handleCurrentChanges"
-                :current-page="pagination.pageNumber"
-                :page-sizes="pagination.pageSizes"
-                :total="pagination.totalRows"
-                :layout="pagination.layout"
-                @size-change='sizeChange'>
-            </el-pagination>
+              :page-size="pagination.pageSize"
+              @current-change="currentChange"
+              :current-page="pagination.pageNumber"
+              :page-sizes="pagination.pageSizes"
+              :total="pagination.totalRows"
+              :layout="pagination.layout"
+              @size-change='sizeChange'>
+          </el-pagination>
           </div>
           <div style="float:left">
-            <el-badge :value="multipleSelectionAll.length" :max="10"  :hidden='istrue' class="item" style='margin-right:20px'>
+            <el-badge :value="multipleSelection.length" :max="10" :min="1"  :hidden='istrue' class="item" style='margin-right:20px'>
                <el-button type="primary" size="small" @click="handleChooseData">批量代购</el-button>
             </el-badge>
             <!-- <el-checkbox @change="toggleSelect(data)" size="mini" style='margin-right:40px'>全选/反选</el-checkbox> -->
@@ -98,14 +100,19 @@
 </template>
 <script>
 import Buy from "@/components/buyandsell";
+import Mycomponent from "@/components/common/alert";
 export default {
-  components: { Buy },
+  components: { Buy, Mycomponent },
   data() {
     return {
-      istrue:true,
+      getRowKeys(row) {
+        return row.id;
+      },
+      isshow: true,
+      istrue: true,
       multipleSelectionAll: [], // 所有选中的数据包含跨页数据
       multipleSelection: [], // 当前页选中的数据
-      idKey: "id", // 标识列表数据中每一行的唯一键的名称(需要按自己的数据改一下)
+      idKey: "id", // 标识列表数据中每一行的唯一键的名称
       tableData: [], // 表格数据
       pagination: {
         totalRows: 0, //总条数
@@ -115,31 +122,66 @@ export default {
         per_page: 0, //前一页
         layout: "total, sizes, prev, pager, next, jumper"
       },
-      title: "",//搜索
+      title: "", //搜索
+      ids: [],
+      wholes_id: [] //商户id
     };
   },
   created() {
     this.tag = localStorage.getItem("tag"); //判断是否完善信息
+    // let a = [["白色", "黑色"], ["XL", "L"]].reduce(
+    //   function(a, b) {
+    //     return a
+    //       .map(function(x) {
+    //         return b.map(function(y) {
+    //           return x.concat(y);
+    //         });
+    //       })
+    //       .reduce(function(a, b) {
+    //         return a.concat(b);
+    //       }, []);
+    //   },
+    //   [[]]
+    // );
+    // console.log(a);
   },
   mounted() {},
   methods: {
-    //最终选中数据
     handleChooseData() {
       // 获取之前需要执行一遍记忆分页处理
       this.changePageCoreRecordData();
-      //如果选择总数大于0出现红色数量圆点 默认不出现
-      if(this.multipleSelectionAll.length>0){
-        this.istrue=false
+      if (this.ids != "") {
+        this.$confirm(
+          `您要代购的商品数量为:${this.multipleSelectionAll.length}`,
+          "提示",
+          {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
+            center: true
+          }
+        )
+          .then(() => {
+            this.$axios({
+              method: "post",
+              url: "api/admin/sell_Off",
+              data: {
+                goods_id: this.ids
+              }
+            }).then(res => {});
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消批量代购"
+            });
+          });
+      } else {
+        this.$message({
+          type: "warning",
+          message: "请选择商品"
+        });
       }
-      console.log(this.multipleSelectionAll)//已经代购的后期要过滤掉的数组
-      // this.$alert(`批量代购的数量为:${this.multipleSelectionAll.length}`, "代购数量", {
-      //   confirmButtonText: "批量代购",
-      //   callback: action => {
-      //     //可以调接口进行批量代购
-      //     alert(JSON.stringify(this.multipleSelectionAll));
-      //     console.log(1)
-      //   }
-      // });
     },
     // 设置选中的方法
     setSelectRow() {
@@ -204,41 +246,45 @@ export default {
         }
       });
     },
-    //改变每页显示条数的时候调用一次
+    currentChange(val) {
+      // 改变页的时候调用一次
+      this.changePageCoreRecordData();
+      this.pagination.pageNumber = val;
+      this.$axios({
+        method: "post",
+        url: "api/admin/Goods_List",
+        data: {
+          wholes_id: this.wholes_id,
+          page: val
+        }
+      }).then(res => {
+        this.tableData = res.data.goos_List.data;
+      });
+    },
     sizeChange(val) {
       // 改变每页显示条数的时候调用一次
       this.changePageCoreRecordData();
       this.pagination.pageSize = val;
     },
-    //当页选中的值
     handleSelectionChange(val) {
       // table组件选中事件,记得加上@selection-change="handleSelectionChange"
       this.multipleSelection = val;
-      this.handleChooseData()
+      if (this.multipleSelection.length != 0) {
+        this.istrue = false;
+      }
+      this.ids = this.multipleSelection.map(item => item.id);
     },
-    //分页切换
-    handleCurrentChanges(val) {
-      this.changePageCoreRecordData();
-      this.pagination.pageNumber = val;
-      this.$axios
-        .get("api/admin/Goods_List", {
-          params: {
-            page: currentPage
-          }
-        })
-        .then(res => {
-          //以后要排除已经选择的
-          this.tableData = data.data.goos_List.data;
-          this.pagination.totalRows = data.data.goos_List.total;
-        })
-        .catch(err => console.log(err));
-    },
-    //接受子组件传过来的值
-    showMsgFromChild(data) {
+    queryData(data) {
       //以后要排除已经选择的
       this.tableData = data.data.goos_List.data;
+      this.wholes_id = data.data.wholes_id;
       this.pagination.totalRows = data.data.goos_List.total;
       this.pagination.per_page = data.data.goos_List.per_page;
+    }, // 得到选中的所有数据
+    getAllSelectionData() {
+      // 再执行一次记忆勾选数据匹配，目的是为了在当前页操作勾选后直接获取选中数据
+      this.changePageCoreRecordData();
+      // console.log(this.multipleSelectionAll);
     },
     //全选与反选切换
     toggleSelect(rows) {
@@ -248,10 +294,34 @@ export default {
         });
         this.allSelect = !this.allSelect;
       }
-    },    
+    },
     //一键代购 全部
     allPurchase(index, row) {
-      // console.log(row.id)
+      if (this.tableData != "") {
+        this.$confirm("此操作将代购所有商品, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+          center: true
+        })
+          .then(() => {
+            this.$axios({
+              method: "post",
+              url: "api/admin/sell_All"
+            }).then(res => {});
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消一键代购"
+            });
+          });
+      }else {
+        this.$message({
+          type: "warning",
+          message: "暂无商品"
+        });
+      }
     },
     //搜索 父组件调用子组件方法
     getData(val) {
