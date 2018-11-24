@@ -8,7 +8,7 @@
                 <el-input v-model="form.title" placeholder="请输入商品名称"></el-input>
             </el-form-item>
             <el-form-item label="商品封面" prop='cover'>
-               <el-upload
+               <el-upload                  
                   action="api/admin/upFile"
                   list-type="picture-card"
                   name='img'
@@ -18,7 +18,7 @@
                   :before-upload="beforeAvatarUpload"
                   :on-remove="handleRemove"
                   :on-success="uploadSuccess">
-                  <i class="el-icon-plus" style='font-size:12px'>单图上传</i>
+                  <i class="el-icon-plus" style='font-size:14px;color:#d1d2d6'>单图上传</i>
                 </el-upload>
                 <el-dialog :visible.sync="dialogVisible">
                   <img width="100%" :src="dialogImageUrl" alt="">
@@ -38,7 +38,7 @@
                   :on-remove="handleRemove"
                   :on-success="uploadSuccessed"
                   :on-exceed='uploadMore'>
-                  <i class="el-icon-plus" style='font-size:12px'>多图上传(最多5张)</i>
+                  <i class="el-icon-plus" style='font-size:14px;color:#d1d2d6'>多图上传(最多5张)</i>
                 </el-upload>
                 <el-dialog :visible.sync="dialogVisible">
                   <img width="100%" :src="dialogImageUrl" alt="">
@@ -169,29 +169,14 @@ export default {
   }
 };
 </script>
-<style scoped>
-.avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
+<style>
+.el-upload--picture-card{
+  background-color:transparent;
+  width: 200px;
+  height: 148px;
 }
-.avatar-uploader .el-upload:hover {
-  border-color: #409eff;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
-.avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
+.el-upload--picture-card.multiple{
+  width:200px
 }
 </style>
 

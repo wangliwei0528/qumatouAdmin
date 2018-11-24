@@ -104,16 +104,16 @@
             </el-table-column>
             </el-table>
             <div class="block" v-if="pagination">
-          <el-pagination
-                @current-change="handleCurrentChanges"
-                :current-page="current_page"
-                :page-sizes="[per_page]"
-                :page-size="per_page"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="total"
-                :background="true">
-            </el-pagination>
-        </div> 
+              <el-pagination
+                    @current-change="handleCurrentChanges"
+                    :current-page="current_page"
+                    :page-sizes="[per_page]"
+                    :page-size="per_page"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="total"
+                    :background="true">
+                </el-pagination>
+            </div> 
             <div v-if='tag==0'>
                  <Mycomponent v-show='isshow'></Mycomponent> 
             </div>              
@@ -219,6 +219,12 @@ export default {
         })
         .then(res => {
           this.dataList = res.data.integral_Lists.data;
+          for (let i = 0; i < this.dataList.length; i++) {
+            this.join_num = this.dataList[i].join_num;
+            this.people_num = this.dataList[i].people_num;
+            this.dataList[i].price = this.dataList[i].price / 100;
+            this.dataList[i].cost = this.dataList[i].cost / 100;
+          }
           this.total = res.data.integral_Lists.total;
         })
         .catch(err => console.log(err));

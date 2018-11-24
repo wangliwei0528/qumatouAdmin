@@ -257,7 +257,47 @@ const home = {
 				title: '代购代销',
 				requiresAuth: true
 			}			
+		},		
+		{
+			path: '/views/banner/banner',
+			name: 'banner',
+			component(resolve) {
+				require.ensure(['@/views/banner/banner'], () => {
+					resolve(require('@/views/banner/banner'))
+				})
+			},
+			meta: {
+				title: '轮播列表',
+				requiresAuth: true
+			}			
 		},
+		{
+			path: '/views/banner/addbanner',
+			name: 'addbanner',
+			component(resolve) {
+				require.ensure(['@/views/banner/addbanner'], () => {
+					resolve(require('@/views/banner/addbanner'))
+				})
+			},
+			meta: {
+				title: '添加轮播',
+				requiresAuth: true
+			}			
+		},
+		{
+			path: '/views/purchase/purchase',
+			name: 'purchase',
+			component(resolve) {
+				require.ensure(['@/views/purchase/purchase'], () => {
+					resolve(require('@/views/purchase/purchase'))
+				})
+			},
+			meta: {
+				title: '添加轮播',
+				requiresAuth: true
+			}			
+		},
+		
 		
 					
 	]

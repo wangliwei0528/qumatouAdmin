@@ -15,6 +15,7 @@
 			:unique-opened="false"
 			:router="true"
 			>
+			<el-menu-item index="/home" style='text-align:center;font-size:20px;color: rgb(64, 158, 255);'>趣码头商户后台管理系统</el-menu-item>
 			<el-menu-item index="/home"><i class="el-icon-menu"></i>概览</el-menu-item>
 			<el-submenu v-for="(menu,index) in menus" :key="index" :index="menu.url?menu.url:(index + '')" >
 				<template slot="title">
@@ -36,10 +37,22 @@ export default {
     return {
       menus: [
         {
+          title: "轮播管理",
+          icon: "el-icon-picture",
+          childs: [
+            {
+              title: "轮播列表",
+              name: "banner",
+              url: "/views/banner/banner"
+            },
+           
+          ]
+        },
+        {
           title: "卡券管理",
           name: "card",
-          icon: "el-icon-date",
-          childs: [
+          icon: "el-icon-message",
+          childs: [            
             {
               title: "我的卡券",
               name: "mycard",
@@ -84,7 +97,7 @@ export default {
         },
         {
           title: "商户管理",
-          icon: "el-icon-date",
+          icon: "el-icon-location-outline",
           childs: [
             {
               title: "商户信息",
@@ -100,7 +113,7 @@ export default {
         },
         {
           title: "积分抽奖",
-          icon: "el-icon-date",
+          icon: "el-icon-star-off",
           childs: [
             {
               title: "积分列表",
@@ -112,7 +125,7 @@ export default {
         },
         {
           title: "代购代销",
-          icon: "el-icon-date",
+          icon: "el-icon-goods",
           childs: [
             {
               title: "代购代销",
@@ -121,7 +134,18 @@ export default {
             },
            
           ]
-        }
+        },
+        {
+          title: "采购",
+          icon: "el-icon-sold-out",
+          childs: [
+            {
+              title: "采购列表",
+              name: "purchase",
+              url: "/views/purchase/purchase"
+            },           
+          ]
+        },
       ]
     };
   },  

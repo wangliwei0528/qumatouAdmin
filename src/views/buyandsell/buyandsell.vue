@@ -150,36 +150,43 @@ export default {
     handleChooseData() {
       // 获取之前需要执行一遍记忆分页处理
       this.changePageCoreRecordData();
-      if (this.ids != "") {
-        this.$confirm(
-          `您要代购的商品数量为:${this.multipleSelectionAll.length}`,
-          "提示",
-          {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning",
-            center: true
-          }
-        )
-          .then(() => {
-            this.$axios({
-              method: "post",
-              url: "api/admin/sell_Off",
-              data: {
-                goods_id: this.ids
-              }
-            }).then(res => {});
-          })
-          .catch(() => {
-            this.$message({
-              type: "info",
-              message: "已取消批量代购"
+      if (this.tableData != "") {
+        if (this.ids != "") {
+          this.$confirm(
+            `您要代购的商品数量为:${this.multipleSelectionAll.length}`,
+            "提示",
+            {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              type: "warning",
+              center: true
+            }
+          )
+            .then(() => {
+              this.$axios({
+                method: "post",
+                url: "api/admin/sell_Off",
+                data: {
+                  goods_id: this.ids
+                }
+              }).then(res => {});
+            })
+            .catch(() => {
+              this.$message({
+                type: "info",
+                message: "已取消批量代购"
+              });
             });
+        } else {
+          this.$message({
+            type: "warning",
+            message: "请选择商品"
           });
+        }
       } else {
         this.$message({
           type: "warning",
-          message: "请选择商品"
+          message: "暂无商品"
         });
       }
     },
@@ -316,7 +323,7 @@ export default {
               message: "已取消一键代购"
             });
           });
-      }else {
+      } else {
         this.$message({
           type: "warning",
           message: "暂无商品"

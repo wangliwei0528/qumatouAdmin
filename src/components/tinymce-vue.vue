@@ -191,4 +191,7 @@ export default {
 .tinymce {
   padding: 0;
 }
+.mce-panel {
+  border: 0 solid #e8e8e8;
+}
 </style>

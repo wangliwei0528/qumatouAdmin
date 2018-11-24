@@ -148,7 +148,7 @@
                    </el-table-column>
                 </el-table>
                 <el-form-item label="优惠券简介" prop='content'>
-                    <el-input type="textarea" v-model="form.content" :maxlength='20' :rows='5'></el-input>
+                    <el-input type="textarea" v-model="form.content" :maxlength='20' :rows='5' placeholder="请输入商品简介"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit">保存</el-button>
@@ -169,10 +169,12 @@
                 <el-table
                     :data="goodlistdata"
                     border
+                     :row-key="getRowKeys"
                     @selection-change="selsChange"
                     style="width: 100%">
                     <el-table-column
                     type="selection"
+                     :reserve-selection="true"
                     width="55">
                     </el-table-column>
                     <el-table-column
@@ -226,6 +228,9 @@ export default {
   data() {
     return {
       itemArr: [],
+      getRowKeys(row) {
+        return row.id;
+      },
       pickerBeginDateBefore: {
         disabledDate: time => {
           let beginDateVal = this.form.end_time;

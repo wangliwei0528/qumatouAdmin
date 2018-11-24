@@ -54,7 +54,7 @@
                         <el-input v-model="form.amount" placeholder="减多少元" type='number'></el-input>
                     </el-col>
                 </el-form-item>                        
-                <el-form-item label="是否有期限" prop='dat'>
+                <el-form-item label="期限限制" prop='dat'>
                   <el-switch
                     v-model="form.dat"
                     active-color="#66b1ff"
@@ -95,7 +95,7 @@
                         </div>       
                     </el-form-item>
                 </template>                
-                <el-form-item label="是否限制商品" prop='usetype'>
+                <el-form-item label="商品限制" prop='usetype'>
                    <el-switch
                     v-model="form.usetype"
                     active-color="#66b1ff"
@@ -145,7 +145,7 @@
                    </el-table-column>
                 </el-table>
                 <el-form-item label="优惠券简介" prop='content'>
-                    <el-input type="textarea" v-model="form.content" :maxlength='200' :rows='5'></el-input>
+                    <el-input type="textarea" v-model="form.content" :maxlength='200' :rows='5' placeholder="请输入商品简介"></el-input>
                 </el-form-item>
                 <div style='width:300px;margin:0 auto'>
                   <el-form-item>
@@ -168,10 +168,12 @@
                 <el-table
                     :data="goodlistdata"
                     ref="multipleTable"
+                    :row-key="getRowKeys"
                     @selection-change="selsChange"
                     style="width: 100%">
                     <el-table-column
                     type="selection"
+                    :reserve-selection="true"
                     width="55">
                     </el-table-column>
                     <el-table-column
@@ -230,6 +232,9 @@
 export default {
   data() {
     return {
+      getRowKeys(row) {
+        return row.id;
+      },
       //开始时间结束时间范围匹配
       pickerBeginDateBefore: {
         disabledDate: time => {
@@ -353,14 +358,6 @@ export default {
         .then(res => {
           //商品列表信息
           this.goodlistdata = res.data.data;
-          // let rows = res.data.data;
-          // this.$nextTick(function() {
-          //   if (rows) {
-          //     rows.forEach(row => {
-          //       this.$refs.multipleTable.toggleRowSelection(row);
-          //     });
-          //   }
-          // });
           //价格除100
           for(let i=0;i<this.goodlistdata.length;i++){
               this.goodlistdata[i].price=this.goodlistdata[i].price/100

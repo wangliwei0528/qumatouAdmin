@@ -41,8 +41,7 @@
             </div> 
             <div v-if='tag==0'>
                 <Mycomponent v-show='isshow'></Mycomponent> 
-            </div>
-              
+            </div>             
         </el-card>
     </div>
 </template>
@@ -65,11 +64,6 @@ export default {
   },
   created() {
     this.tag = localStorage.getItem("tag");
-    // if (localStorage.getItem("tag") == 0) {
-    //   this.isshow = true;
-    // } else if (this.tag == 1) {
-    //   this.isshow = false;
-    // }
     this.$axios
       .get("/api/admin/coupon_Logs")
       .then(res => {
