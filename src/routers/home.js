@@ -257,6 +257,19 @@ const home = {
 				title: '代购代销',
 				requiresAuth: true
 			}			
+		},	
+		{
+			path: '/views/buyed/buyed',
+			name: 'buyed',
+			component(resolve) {
+				require.ensure(['@/views/buyed/buyed'], () => {
+					resolve(require('@/views/buyed/buyed'))
+				})
+			},
+			meta: {
+				title: '代购代销',
+				requiresAuth: true
+			}			
 		},		
 		{
 			path: '/views/banner/banner',

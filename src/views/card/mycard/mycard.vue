@@ -105,6 +105,7 @@
             <span v-if='scope.row.flag==0&&scope.row.status==1'>
             <el-button 
             size="small"
+            type='text'
             @click.native.prevent="editRow(scope.$index, scope.row)"
             >
               编辑
@@ -112,6 +113,7 @@
             </span>            
             <el-button 
             size="small"
+            type='text'
             @click.native.prevent="deleteRow(scope.$index, scope.row)"
             >
               <span>{{scope.row.status==0?'已下架':'下架'}}</span>
@@ -172,11 +174,6 @@ export default {
   created() {
     this.tag = localStorage.getItem("tag");
     this.getData();
-    // if (localStorage.getItem("tag") == 0) {
-    //   this.isshow = true;
-    // } else if (this.tag == 1) {
-    //   this.isshow = false;
-    // }
   },
   mounted() {
     // this.date();
@@ -187,7 +184,7 @@ export default {
       this.$axios
         .get("/api/admin/coupons", {
           params: {
-            page: this.page,
+            page: this.currentPage?this.currentPage:this.page,
             title: this.title
           }
         })
@@ -208,17 +205,7 @@ export default {
     //页码变更显示当前页的数据
     handleCurrentChanges: function(currentPage) {
       this.currentPage = currentPage;
-      this.$axios
-        .get("/api/admin/coupons", {
-          params: {
-            page: currentPage
-          }
-        })
-        .then(res => {
-          this.dataList = res.data.data;
-          this.total = res.data.total;
-        })
-        .catch(err => console.log(err));
+      this.getData()
     },
     //单行删除
     deleteRow(index, row) {

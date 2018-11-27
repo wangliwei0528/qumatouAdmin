@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Buy @listenChild='queryData' :title='title' ref="childMethod"/>
+    <Buy @listenChild='queryData' :title='title' :multipleSelectionAll='multipleSelectionAll' ref="childMethod"/>
     <el-card class="box-card">
         <div slot="header" class='header'>
           <span>代购商品列表</span>            
@@ -38,12 +38,12 @@
           </el-table-column>
           <el-table-column
             prop="subtitle"
-            label="副标题"
+            label="标题"
             align="center">
           </el-table-column>
           <el-table-column
             prop="cover"
-            label="封面图"
+            label="封面"
             align="center">
             <template slot-scope="scope">
               <img :src="scope.row.cover" alt="">
@@ -51,7 +51,7 @@
           </el-table-column>
           <el-table-column
             prop="cate_name"
-            label="分类名称"
+            label="分类"
             align="center">
           </el-table-column>
           <el-table-column
@@ -65,10 +65,10 @@
             align="center">
           </el-table-column>
           <el-table-column
-            prop="item_title"
-            label="规格值"
+            prop="price"
+            label="价格(元)"
             align="center">
-          </el-table-column>          
+          </el-table-column>              
         </el-table>
         <div style='margin:20px 0;'>
           <div style='float:right' v-if="tableData.length>10">
@@ -99,7 +99,7 @@
   </div>
 </template>
 <script>
-import Buy from "@/components/buyandsell";
+import Buy from "@/components/common/buyandsell";
 import Mycomponent from "@/components/common/alert";
 export default {
   components: { Buy, Mycomponent },
@@ -124,7 +124,14 @@ export default {
       },
       title: "", //搜索
       ids: [],
-      wholes_id: [] //商户id
+      wholes_id: [], //商户id
+      centerDialogVisible: true,
+      form: {
+        price: ""
+      },
+      rules: {
+        price: [{ required: true, message: "请输入商品价格", trigger: "blur" }]
+      }
     };
   },
   created() {
@@ -150,6 +157,7 @@ export default {
     handleChooseData() {
       // 获取之前需要执行一遍记忆分页处理
       this.changePageCoreRecordData();
+      this.setSelectRow();
       if (this.tableData != "") {
         if (this.ids != "") {
           this.$confirm(
@@ -169,7 +177,10 @@ export default {
                 data: {
                   goods_id: this.ids
                 }
-              }).then(res => {});
+              }).then(res => {
+                this.getData()
+                this.istrue = true;
+              });
             })
             .catch(() => {
               this.$message({
@@ -201,6 +212,7 @@ export default {
       let that = this;
       this.multipleSelectionAll.forEach(row => {
         selectAllIds.push(row[idKey]);
+        // console.log(this.multipleSelectionAll);
       });
       this.$refs.table.clearSelection();
       for (var i = 0; i < this.tableData.length; i++) {
@@ -282,8 +294,12 @@ export default {
       this.ids = this.multipleSelection.map(item => item.id);
     },
     queryData(data) {
+      console.log(this.multipleSelectionAll);
       //以后要排除已经选择的
       this.tableData = data.data.goos_List.data;
+      for (let i = 0; i < this.tableData.length; i++) {
+        this.tableData[i].price = this.tableData[i].price / 100;
+      }
       this.wholes_id = data.data.wholes_id;
       this.pagination.totalRows = data.data.goos_List.total;
       this.pagination.per_page = data.data.goos_List.per_page;
@@ -331,7 +347,7 @@ export default {
       }
     },
     //搜索 父组件调用子组件方法
-    getData(val) {
+    getData() {
       // console.log(this.$refs.childMethod); //返回的是一个vue对象，所以可以直接调用其方法
       this.$refs.childMethod.onSubmit(); //调用子组件的方法
     }

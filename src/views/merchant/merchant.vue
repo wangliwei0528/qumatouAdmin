@@ -241,7 +241,7 @@ export default {
         url: "api/admin/edit_merchants",        
         data: data
       })
-        .then(res => {
+        .then(res => {          
           this.form = res.data.data;
         })
         .catch(err => {

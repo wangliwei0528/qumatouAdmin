@@ -41,10 +41,7 @@
                             <div class='img'>
                               <img :src="item.cover" alt="">
                             </div>
-                            <span class='title'>
-                              <!-- <el-radio-group v-model="form.radio" @change="onRadioChange">
-                                <el-radio  :label="item.id" :value='item.id'>{{item.title}}</el-radio>
-                              </el-radio-group> -->
+                            <span class='title'>                            
                               <el-checkbox-group v-model="form.check" @change="onCheckChange">
                                 <el-checkbox :label="item.id" :value='item.id'>{{item.title}}</el-checkbox>                                
                               </el-checkbox-group>
@@ -79,7 +76,7 @@ import City from "@/components/city";
 import Mycomponent from "@/components/common/alert";
 export default {
   components: { City, Mycomponent },
-  props: ["title"],
+  props: ["title", "multipleSelectionAll"],
   data() {
     return {
       enumArr: [],
@@ -98,7 +95,7 @@ export default {
       currentPage: 1, //当前页默认为1
       pagesize: 10, //每页显示的数据
       page: 1, //当前页第一页
-      per_page: 0, //前一页
+      per_page: 0 //前一页
     };
   },
   created() {
@@ -178,6 +175,7 @@ export default {
       this.$axios
         .get("api/admin/wholesalers_List", {
           params: {
+            page: this.currentPage ? this.currentPage : this.page,
             region_id: this.form.region_id[this.form.region_id.length - 1], //只取最后一位  字符串
             industry_id: this.form.industry_id[
               this.form.industry_id.length - 1
@@ -186,7 +184,7 @@ export default {
           }
         })
         .then(res => {
-          this.list = res.data.wholesalers_List.data;          
+          this.list = res.data.wholesalers_List.data;
           this.total = res.data.wholesalers_List.total;
           this.per_page = res.data.wholesalers_List.per_page;
         }); //批发商列表
@@ -202,17 +200,7 @@ export default {
     //页码变更显示当前页的数据
     handleCurrentChanges(currentPage) {
       this.currentPage = currentPage;
-      this.$axios
-        .get("api/admin/wholesalers_List", {
-          params: {
-            page: currentPage
-          }
-        })
-        .then(res => {
-          this.list = res.data.wholesalers_List.data;
-          this.total = res.data.wholesalers_List.total;
-        })
-        .catch(err => console.log(err));
+      this.wholelist();
     },
     //取消
     // resetForm(ref) {
@@ -220,19 +208,32 @@ export default {
     // },
     //确定提交
     onSubmit() {
-     //如果没有选择商户提醒选择商户
-      if (this.form.check!='') {
+      //如果没有选择商户提醒选择商户
+      if (this.form.check != "") {
         this.$axios({
           method: "post",
           url: "api/admin/Goods_List",
           data: {
             wholes_id: this.form.check,
             page: this.currentPage,
-            title: this.title
+            title: this.title,
+            purchase_id: this.form.check,
+            type: 1
           }
         })
           .then(res => {
             if (res.data.status == 1) {
+              //过滤已经代购的
+              for (var i = 0; i < this.multipleSelectionAll.length; i++) {
+                for (var j = 0; j < res.data.goos_List.data.length; j++) {
+                  if (res.data.goos_List.data[j].id === this.multipleSelectionAll[i].id) {
+                    // console.log(res.data.goos_List.data[j].id);
+                    // console.log(this.multipleSelectionAll[i].id);
+                    res.data.goos_List.data.splice(j, 1);
+                    j--;
+                  }
+                }
+              }
               this.$emit("listenChild", res); //向父组件传值
               this.centerDialogVisible = false;
             }

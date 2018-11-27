@@ -100,12 +100,7 @@ export default {
   },
   created() {
     this.tag=localStorage.getItem("tag")
-    this.getData();
-    // if (localStorage.getItem("tag") == 0) {
-    //   this.isshow = true;
-    // } else if (this.tag == 1) {
-    //   this.isshow = false;
-    // }
+    this.getData();    
   },
   mounted() {
     // this.date();
@@ -129,7 +124,8 @@ export default {
         .get("api/admin/launchmerchants_lists", {
           params: {
             launch_merchant_id: this.$route.params.id,
-            s_type: this.s_type == 0 ? this.s_type : 1
+            s_type: this.s_type == 0 ? this.s_type : 1,
+            page: this.currentPage? this.currentPage:this.page
           }
         })
         .then(res => {
@@ -149,17 +145,7 @@ export default {
     //页码变更显示当前页的数据
     handleCurrentChanges: function(currentPage) {
       this.currentPage = currentPage;
-      this.$axios
-        .get("api/admin/launchmerchants_lists", {
-          params: {
-            page: currentPage
-          }
-        })
-        .then(res => {
-          this.dataList = res.data.data;
-          this.total = res.data.total;
-        })
-        .catch(err => console.log(err));
+      this.getData()
     },
     //跳转创建投放页面
     createPush() {

@@ -51,7 +51,7 @@ export default {
   components: { Mycomponent },
   data() {
     return {
-      isshow:true,
+      isshow: true,
       tag: "",
       listData: [],
       total: 0, //总数默认为0
@@ -64,37 +64,34 @@ export default {
   },
   created() {
     this.tag = localStorage.getItem("tag");
-    this.$axios
-      .get("/api/admin/coupon_Logs")
-      .then(res => {
-        this.listData = res.data.data;
-        if (res.data.total < res.data.per_page) {
-          this.pagination = false;
-        } else {
-          this.pagination = true;
-        }
-        this.total = res.data.total;
-        this.per_page = res.data.per_page;
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    this.getData();
   },
-  methods:{
-    handleCurrentChanges:function(currentPage) {
-      this.currentPage = currentPage;      
+  methods: {
+    getData() {
       this.$axios
         .get("/api/admin/coupon_Logs", {
           params: {
-            page: currentPage
-          },          
+            page: this.currentPage ? this.currentPage : this.page
+          }
         })
         .then(res => {
           this.listData = res.data.data;
+          if (res.data.total < res.data.per_page) {
+            this.pagination = false;
+          } else {
+            this.pagination = true;
+          }
           this.total = res.data.total;
+          this.per_page = res.data.per_page;
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          console.log(err);
+        });
     },
+    handleCurrentChanges: function(currentPage) {
+      this.currentPage = currentPage;
+      this.getData()
+    }
   }
 };
 </script>

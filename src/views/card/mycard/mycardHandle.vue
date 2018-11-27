@@ -346,7 +346,11 @@ export default {
       this.goodlist = true;
       //调接口获取商品列表信息
       this.$axios
-        .get("/api/admin/skugoods_info", {})
+        .get("/api/admin/skugoods_info", {
+          params:{
+            page:this.currentPage?this.currentPage:this.page
+          }
+        })
         .then(res => {
           if (res) {
             //商品列表信息
@@ -368,17 +372,7 @@ export default {
     //页码变更显示当前页的数据
     handleCurrentChange: function(currentPage) {
       this.currentPage = currentPage;
-      this.$axios
-        .get("/api/admin/skugoods_info", {
-          params: {
-            page: currentPage
-          }          
-        })
-        .then(res => {
-          this.data = res.data.data;
-          this.total = res.data.total;
-        })
-        .catch(err => console.log(err));
+      this.goodChoose()
     },
     cancle() {
       //隐藏商品列表

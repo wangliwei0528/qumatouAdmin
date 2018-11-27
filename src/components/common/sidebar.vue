@@ -44,15 +44,14 @@ export default {
               title: "轮播列表",
               name: "banner",
               url: "/views/banner/banner"
-            },
-           
+            }
           ]
         },
         {
           title: "卡券管理",
           name: "card",
           icon: "el-icon-message",
-          childs: [            
+          childs: [
             {
               title: "我的卡券",
               name: "mycard",
@@ -92,7 +91,7 @@ export default {
               title: "卡券领取",
               name: "getlist",
               url: "/views/card/getlist/getlist"
-            },
+            }
           ]
         },
         {
@@ -119,8 +118,7 @@ export default {
               title: "积分列表",
               name: "integrallist",
               url: "/views/integrallist/integrallist"
-            },
-           
+            }
           ]
         },
         {
@@ -132,7 +130,11 @@ export default {
               name: "buyandsell",
               url: "/views/buyandsell/buyandsell"
             },
-           
+            {
+              title: "代购商品",
+              name: "buyed",
+              url: "/views/buyed/buyed"
+            }
           ]
         },
         {
@@ -143,12 +145,23 @@ export default {
               title: "采购列表",
               name: "purchase",
               url: "/views/purchase/purchase"
-            },           
+            }
           ]
-        },
+        }
       ]
     };
-  },  
+  },
+  created() {
+    //条件满足 代购代销不显示
+    let is_proxy = localStorage.getItem("is_proxy");    
+    if (is_proxy == 0) {
+      for(let i=0;i<this.menus.length;i++){
+      if(this.menus[i].title==='代购代销'){
+          this.menus.splice(i, 1);
+      }
+    }     
+    }
+  }
 };
 </script>
 

@@ -8,18 +8,18 @@
                 <span style='font-size:12px'>有投放卡券时,该投放设置不可编辑</span>                                
                 <el-form ref="form" :model="form" label-width="80px" style='margin-top:30px;width:50%'>
                     <el-form-item label="投放数量">
-                        <el-input v-model="form.coupons" controls-position="right" @change="handleChange" :min="1" ></el-input>
+                        <el-input v-model="form.coupons" controls-position="right" @change="handleChange" :min="0" type=number></el-input>
                         <span style='color:red'>* 投放数量 元/张</span>
                     </el-form-item>                    
                     <el-form-item label="投放天数">
-                        <el-input v-model="form.times" controls-position="right" @change="handleChange" :min="1" ></el-input>
+                        <el-input v-model="form.times" controls-position="right" @change="handleChange" :min="0" type=number></el-input>
                         <span style='color:red'>* 投放时长按天计算 元/天</span>
                     </el-form-item>
                     <el-form-item label="橱窗数量">
-                        <el-input v-model="form.nums" controls-position="right" @change="handleChange" :min="1" ></el-input>
+                        <el-input v-model="form.nums" controls-position="right" @change="handleChange" :min="0" type=number></el-input>
                     </el-form-item>
                     <el-form-item label="最少天数">
-                        <el-input v-model="form.least_times" controls-position="right" @change="handleChange" :min="1" ></el-input>
+                        <el-input v-model="form.least_times" controls-position="right" @change="handleChange" :min="0" type=number></el-input>
                     </el-form-item>                                        
                 </el-form>
             </div>          
@@ -48,12 +48,7 @@ export default {
   },
   created() {
     this.tag=localStorage.getItem("tag")
-    this.getData();
-    // if (localStorage.getItem("tag") == 0) {
-    //   this.isshow = true;
-    // } else if (this.tag == 1) {
-    //   this.isshow = false;
-    // }
+    this.getData();   
   },
   mounted() {
     // this.date();

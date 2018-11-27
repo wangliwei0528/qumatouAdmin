@@ -55,7 +55,7 @@
                 label="商品封面"
                 align='center'>
                 <template slot-scope="scope">
-                  <img :src="scope.row.cover" style='width:30px;height:30px'>
+                  <img :src="scope.row.cover" style='width:50px;height:50px'>
                 </template>
               </el-table-column>
               <el-table-column
@@ -180,7 +180,7 @@ export default {
       this.$axios
         .get("api/admin/integral_Lists", {
           params: {
-            page: this.page,
+            page: this.current_page?this.current_page:this.page,
             title: this.title,
             type: this.type
           }
@@ -210,24 +210,7 @@ export default {
     //页码变更显示当前页的数据
     handleCurrentChanges: function(current_page) {
       this.current_page = current_page;
-      this.$axios
-        .get("/api/admin/integral_Lists", {
-          params: {
-            page: current_page,
-            type: this.type
-          }
-        })
-        .then(res => {
-          this.dataList = res.data.integral_Lists.data;
-          for (let i = 0; i < this.dataList.length; i++) {
-            this.join_num = this.dataList[i].join_num;
-            this.people_num = this.dataList[i].people_num;
-            this.dataList[i].price = this.dataList[i].price / 100;
-            this.dataList[i].cost = this.dataList[i].cost / 100;
-          }
-          this.total = res.data.integral_Lists.total;
-        })
-        .catch(err => console.log(err));
+      this.getData()
     },
     //添加积分
     addluck() {

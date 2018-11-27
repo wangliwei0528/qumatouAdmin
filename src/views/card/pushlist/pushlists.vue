@@ -125,7 +125,7 @@ export default {
       this.$axios
         .get("api/admin/launch_mys", {
           params: {
-            page: this.page,
+            page: this.currentPage?this.currentPage:this.page,
             s_type: this.s_type == 0 ? this.s_type : 1,
             title: this.title
           }
@@ -148,17 +148,7 @@ export default {
     },
     handleCurrentChanges: function(currentPage) {
       this.currentPage = currentPage;
-      this.$axios
-        .get("api/admin/launch_mys", {
-          params: {
-            page: currentPage
-          }
-        })
-        .then(res => {
-          this.listData = res.data.data;
-          this.total = res.data.total;
-        })
-        .catch(err => console.log(err));
+      this.getData()
     }
   }
 };

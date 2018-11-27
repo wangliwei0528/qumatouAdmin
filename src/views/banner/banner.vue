@@ -4,7 +4,7 @@
             <div slot="header" class='header'>
                 <!-- 轮播类型 -->
                 <el-button-group>
-                    <el-button type="primary" v-for='(item,index) in bannerType' :key='index' @click=gettype(index)>{{item}}</el-button>
+                    <el-button type="primary" v-for='(item,index) in bannerType' :key='index' @click=gettype(index) :class="{active:index==dynamic}">{{item}}</el-button>
                 </el-button-group>
                  <!-- 轮播类型 -->
             </div>  
@@ -58,13 +58,7 @@
                 prop="price"
                 align='center'
                 label="价格">
-                </el-table-column>
-                <!-- <el-table-column
-                prop="url"
-                align='center'
-                label="URL"
-                show-overflow-tooltip>
-                </el-table-column> -->
+                </el-table-column>             
                 <el-table-column prop="is_show" label="状态" align="center">
                   <template slot-scope="scope">
                     <div :style="{color: scope.row.status==1?'#4F4F4F':'red'}">{{scope.row.status?'显示':'隐藏'}}</div>
@@ -78,9 +72,9 @@
           <el-button @click="editClick(scope.$index, scope.row)" type="text" size="small">编辑</el-button>
           <el-button type="text" size="small">
             <el-dropdown>
-                          <span class="el-dropdown-link" style="font-size:12px;color:#409EFF">
-                            操作<i class="el-icon-arrow-down el-icon--right"></i>
-                          </span>
+                  <span class="el-dropdown-link" style="font-size:12px;color:#409EFF">
+                    操作<i class="el-icon-arrow-down el-icon--right"></i>
+                  </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
                   <el-button @click="deleteClick(scope.$index, scope.row)" type="text">删除</el-button>
@@ -121,6 +115,7 @@ export default {
     return {
       isshow: true,
       tag: "",
+      dynamic:0,
       bannerType: [], //轮播类型
       dataList: [], //
       title: "",
@@ -145,8 +140,21 @@ export default {
         this.bannerType = res.data.carousel_array;
       });
     },
+    //获取点击的轮播类型
+    gettype(index) {
+      if (index == this.type) {
+        this.dynamic = index;
+      }
+      this.type = index;
+      this.getData()
+    },
     getData() {
-      this.$axios.get("api/admin/carousel_List").then(res => {
+      this.$axios.get("api/admin/carousel_List",{
+        params:{
+          page: this.current_page?this.current_page:this.page,
+          type:this.type
+        }
+      }).then(res => {
         this.dataList = res.data.carousel_List.data;
         for (let i = 0; i < this.dataList.length; i++) {
           this.dataList[i].price = this.dataList[i].price / 100;
@@ -160,27 +168,12 @@ export default {
         this.per_page = res.data.carousel_List.per_page;
       });
     },
+    //页码切换
     handleCurrentChanges: function(current_page) {
       this.current_page = current_page;
-      this.$axios
-        .get("api/admin/carousel_List", {
-          params: {
-            page: current_page
-          }
-        })
-        .then(res => {
-          this.dataList = res.data.carousel_List.data;
-          for (let i = 0; i < this.dataList.length; i++) {
-            this.dataList[i].price = this.dataList[i].price / 100;
-          }
-          this.total = res.data.carousel_List.total;
-        })
-        .catch(err => console.log(err));
+      this.getData()
     },
-    //获取点击的轮播类型
-    gettype(index) {
-      this.type = index;
-    },
+    
     //编辑
     editClick(index, row) {
       this.$router.push({ name: "addbanner", query: { id: row.id } });
@@ -222,4 +215,12 @@ export default {
   }
 };
 </script>
+<style scoped>
+.active {
+  background: #66b1ff;
+  border-color: #66b1ff;
+  color: #fff;
+}
+</style>
+
 

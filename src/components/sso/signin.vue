@@ -97,6 +97,7 @@ export default {
                 localStorage.setItem("token", res.data.token); //token
                 localStorage.setItem("tag", res.data.tag); //判断信息完整与否的参数
                 localStorage.setItem("mobile", res.data.mobile); //登入手机号
+                localStorage.setItem("is_proxy", res.data.is_proxy); //权限是否显示代购代销
               }
             });
           } else {

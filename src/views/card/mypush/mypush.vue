@@ -83,12 +83,7 @@ export default {
   created() {
     this.tag=localStorage.getItem("tag")
     this.token = localStorage.getItem("token");
-    this.getData();
-    // if (localStorage.getItem("tag") == 0) {
-    //   this.isshow = true;
-    // } else if (this.tag == 1) {
-    //   this.isshow = false;
-    // }
+    this.getData();    
   },
   mounted(){
     // this.date();
@@ -98,7 +93,7 @@ export default {
       this.$axios
         .get("api/admin/my_launch", {
           params: {
-            page: this.page,
+            page: this.currentPage?this.currentPage:this.page,
             title: this.title
           },          
         })
@@ -118,17 +113,7 @@ export default {
     },
     handleCurrentChanges: function(currentPage) {
       this.currentPage = currentPage;
-      this.$axios
-        .get("api/admin/my_launch", {
-          params: {
-            page: currentPage
-          },         
-        })
-        .then(res => {
-          this.tableData = res.data.data;
-          this.total = res.data.total;
-        })
-        .catch(err => console.log(err));
+      this.getData()
     }
   }
 };

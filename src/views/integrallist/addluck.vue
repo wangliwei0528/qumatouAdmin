@@ -172,12 +172,8 @@ export default {
 <style>
 .el-upload--picture-card{
   background-color:transparent;
-  width: 200px;
-  height: 148px;
 }
-.el-upload--picture-card.multiple{
-  width:200px
-}
+
 </style>
 
 

@@ -54,54 +54,46 @@ export default {
   data() {
     return {
       tag: "",
-      isshow:true,
+      isshow: true,
       listData: [],
       total: 0, //总数默认为0
       currentPage: 1, //当前页默认为1
       pagesize: 10, //每页显示的数据
       page: 1, //当前页第一页
       per_page: 0, //前一页
-      pagination:true //分页器
+      pagination: true //分页器
     };
   },
   created() {
     this.tag = localStorage.getItem("tag");
-    // if (localStorage.getItem("tag") == 0) {
-    //   this.isshow = true;
-    // } else if (this.tag == 1) {
-    //   this.isshow = false;
-    // }
-    this.$axios
-      .get("/api/admin/member_Lists")
-      .then(res => {
-        this.listData = res.data.member_List.data;
-        if (res.data.member_List.total < res.data.member_List.per_page) {
-          this.pagination = false;
-        } else {
-          this.pagination = true;
-        }
-        this.total = res.data.member_List.total;
-        this.per_page = res.data.member_List.per_page;
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    this.getData()
   },
-  methods:{
-    handleCurrentChanges:function(currentPage) {
-      this.currentPage = currentPage;      
+  methods: {
+    getData() {
       this.$axios
         .get("/api/admin/member_Lists", {
           params: {
-            page: currentPage
-          },          
+            page: this.currentPage ? this.currentPage : this.page
+          }
         })
         .then(res => {
-          this.listData = res.data.data;
+          this.listData = res.data.member_List.data;
+          if (res.data.member_List.total < res.data.member_List.per_page) {
+            this.pagination = false;
+          } else {
+            this.pagination = true;
+          }
           this.total = res.data.member_List.total;
+          this.per_page = res.data.member_List.per_page;
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          console.log(err);
+        });
     },
+    handleCurrentChanges: function(currentPage) {
+      this.currentPage = currentPage;
+     this.getData()
+    }
   }
 };
 </script>

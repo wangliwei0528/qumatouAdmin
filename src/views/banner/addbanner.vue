@@ -21,7 +21,8 @@
                   :on-success="uploadSuccess">
                   <i class="el-icon-plus"></i>
                 </el-upload>
-                <el-dialog title="原始轮播图片"  :visible.sync="dialogVisible">
+                <img width="100%" :src="imgurl" alt="" class='pic'>
+                <el-dialog title="原始轮播图片"  :visible.sync="dialogVisible" append-to-body>
                   <img width="100%" :src="dialogImageUrl" alt="">
                 </el-dialog>                
             </el-form-item>           
@@ -47,6 +48,7 @@
 export default {
   data() {
     return {
+      imgurl:[],
       dialogImageUrl: "",
       dialogVisible: false,
       form: {
@@ -73,7 +75,7 @@ export default {
   created() {
     this.getheader(); //获取头部信息
     this.type = this.$route.query.type; //判断type确认是否显示price
-    if(this.$route.query.id){
+    if(this.$route.query.id){//编辑的信息
         this.editMsg();
     }    
   },
@@ -86,6 +88,7 @@ export default {
     },
     //上传限制
     beforeAvatarUpload(file) {
+      this.imgurl=''//编辑时替换图片
       const isJPG = file.type === "image/jpeg";
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isJPG) {
@@ -150,10 +153,10 @@ export default {
           id: this.$route.query.id
         }
       }).then(res => {
+        // console.log(res)
         this.form = res.data.carousel;
         this.form.price = res.data.carousel.price/100;
-        this.dialogImageUrl=res.data.carousel.cover
-        this.dialogVisible = true;
+        this.imgurl=res.data.carousel.cover
       });
     }
   }
@@ -162,6 +165,18 @@ export default {
 <style>
 .el-upload--picture-card{
   background-color:transparent;
+  position:relative;
+  z-index:2
+}
+.pic{
+  width:148px;
+  height:148px;
+  position:absolute;
+  top:0;
+  left:0
+}
+.el-upload--picture-card i {
+  font-size:14px
 }
 </style>
 
