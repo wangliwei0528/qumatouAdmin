@@ -1,7 +1,16 @@
 <template>
     <div class="setcard">
+      <el-row class='top'>
+            <div class="breadcrumb">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item>
+                    <el-breadcrumb-item :to="{name:'pushcard'}">卡券投放</el-breadcrumb-item>
+                    <el-breadcrumb-item>卡券设置</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
+        </el-row>
         <el-card class="box-card">
-            <div slot="header" class="clearfix">
+            <div slot="header" class='header'>
                 <span>卡券设置</span>               
             </div> 
             <div>

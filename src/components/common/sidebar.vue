@@ -133,12 +133,12 @@ export default {
             {
               title: "代购商品",
               name: "buyed",
-              url: "/views/buyed/buyed"
+              url: "/views/buyandsell/buyed"
             }
           ]
         },
         {
-          title: "采购",
+          title: "采购商品",
           icon: "el-icon-sold-out",
           childs: [
             {

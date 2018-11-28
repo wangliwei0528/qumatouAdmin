@@ -1,6 +1,16 @@
 <template>
+<div>
+<el-row class='top'>
+        <div class="breadcrumb">
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item>
+                <el-breadcrumb-item :to="{name:'pushcard'}">卡券投放</el-breadcrumb-item>
+                <el-breadcrumb-item>创建卡券投放</el-breadcrumb-item>
+            </el-breadcrumb>
+        </div>
+    </el-row>
   <el-card>
-      <div slot="header" >
+      <div slot="header" class='header' >
         <span>{{'创建卡券投放'}}</span>
       </div>
       <el-form ref="form" :model="form" label-width="100px" style='width:670px'>
@@ -41,6 +51,7 @@
             </div>
         </el-form>
   </el-card>
+  </div>
 </template>
 <script>
 export default {

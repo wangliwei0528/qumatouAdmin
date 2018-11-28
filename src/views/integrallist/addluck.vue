@@ -1,6 +1,16 @@
 <template>
+<div>
+<el-row class='top'>
+            <div class="breadcrumb">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item> 
+                    <el-breadcrumb-item :to="{ path: 'integrallist' }">积分列表</el-breadcrumb-item>
+                    <el-breadcrumb-item>添加积分</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
+        </el-row>
     <el-card>
-        <div slot="header" >
+        <div slot="header" class='header' >
             <span>{{'积分抽奖/购买'}}</span>
         </div>
         <el-form ref="form" :model="form" label-width="100px" style='width:670px' :rules='rules'>
@@ -16,6 +26,7 @@
                   :limit=1
                   :on-preview="handlePictureCardPreview"
                   :before-upload="beforeAvatarUpload"
+                  :before-remove="beforeRemove"
                   :on-remove="handleRemove"
                   :on-success="uploadSuccess">
                   <i class="el-icon-plus" style='font-size:14px;color:#d1d2d6'>单图上传</i>
@@ -35,6 +46,7 @@
                   :headers='header'
                   :on-preview="handlePictureCardPreview"
                   :before-upload="beforeAvatarUpload"
+                  :before-remove="beforeRemove"
                   :on-remove="handleRemove"
                   :on-success="uploadSuccessed"
                   :on-exceed='uploadMore'>
@@ -67,6 +79,7 @@
             </div>                    
         </el-form>
     </el-card>
+    </div>
 </template>
 <script>
 import tinymce from "@/components/tinymce-vue";
@@ -126,6 +139,9 @@ export default {
       }
       return isJPG && isLt2M;
     },
+    beforeRemove(file, fileList) {
+      return this.$confirm(`确定移除 ${file.name}？`);
+    },
     //移除图片列表
     handleRemove(file, fileList) {
       console.log(file, fileList);
@@ -142,9 +158,9 @@ export default {
     //多图上传成功
     uploadSuccessed(res, file,fileList) {
       this.form.banner.push(res.join())
-    },
-    uploadMore(){
-      this.$message.error("最多上传5张");
+    },    
+    uploadMore(file,fileList){
+     this.$message.warning(`当前限制选择 5 个文件，本次选择了 ${file.length} 个文件，共选择了 ${file.length + fileList.length} 个文件`);
     },
     //提交
     onSubmit(ref) {    

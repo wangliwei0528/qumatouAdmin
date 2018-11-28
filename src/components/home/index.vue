@@ -8,7 +8,6 @@ ol,
 ul {
   list-style: none;
 }
-
 li {
   list-style-type: none;
 }
@@ -20,13 +19,11 @@ li {
   visibility: hidden;
   content: "";
 }
-
 * {
   margin: 0;
   padding: 0;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
-
 @media screen and (max-width: 319px) {
   html {
     font-size: 42.666665px;
@@ -271,6 +268,3 @@ export default {
   }
 };
 </script>
-
-
-

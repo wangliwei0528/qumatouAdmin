@@ -1,5 +1,14 @@
 <template>
-  <el-card class="box-card">
+<div>
+  <el-row class='top'>
+        <div class="breadcrumb">
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item>
+                <el-breadcrumb-item>我的卡券</el-breadcrumb-item>
+            </el-breadcrumb>
+        </div>
+    </el-row>
+<el-card class="box-card">
       <!-- 头部标题 -->
       <div slot="header" class='header'>
         <span>卡券列表</span>    
@@ -147,6 +156,8 @@
         <Mycomponent v-show='isshow'></Mycomponent>  
       </div>      
   </el-card>  
+</div>
+  
 </template>
 
 <script>

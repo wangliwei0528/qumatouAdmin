@@ -1,5 +1,13 @@
 <template>
     <div>
+      <el-row class='top'>
+            <div class="breadcrumb">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item> 
+                    <el-breadcrumb-item :to="{ path: 'integrallist' }">积分列表</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
+        </el-row>
         <el-card>
             <!-- tab切换 -->
             <div slot="header" class='header'>
@@ -186,13 +194,17 @@ export default {
           }
         })
         .then(res => {
-          this.dataList = res.data.integral_Lists.data;
-          for (let i = 0; i < this.dataList.length; i++) {
-            this.join_num = this.dataList[i].join_num;
-            this.people_num = this.dataList[i].people_num;
-            this.dataList[i].price = this.dataList[i].price / 100;
-            this.dataList[i].cost = this.dataList[i].cost / 100;
-          }
+          this.dataList = res.data.integral_Lists.data.map(item=>{
+            item.price=item.price/100
+            item.cost=item.cost/100
+            return item
+          });
+          // for (let i = 0; i < this.dataList.length; i++) {
+          //   this.join_num = this.dataList[i].join_num;
+          //   this.people_num = this.dataList[i].people_num;
+          //   this.dataList[i].price = this.dataList[i].price / 100;
+          //   this.dataList[i].cost = this.dataList[i].cost / 100;
+          // }
           if (
             res.data.integral_Lists.total < res.data.integral_Lists.per_page
           ) {

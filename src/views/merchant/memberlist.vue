@@ -1,5 +1,14 @@
 <template>
     <div>
+      <el-row class='top'>
+            <div class="breadcrumb">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item>
+                    <el-breadcrumb-item :to="{name:'merchant'}">商户管理</el-breadcrumb-item>
+                    <el-breadcrumb-item>会员列表</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
+        </el-row>
         <el-card class="box-card">
             <div slot="header" class='header'>
                 <span>会员列表</span>    

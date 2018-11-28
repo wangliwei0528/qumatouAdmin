@@ -1,5 +1,14 @@
 <template>
     <div class="mypush">
+        <el-row class='top'>
+            <div class="breadcrumb">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item>
+                    <el-breadcrumb-item :to="{name:'pushcard'}">卡券投放</el-breadcrumb-item>
+                    <el-breadcrumb-item>我的投放</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
+        </el-row>
         <el-card>
              <div slot="header" class='header'>
                 <span>我的投放</span>    

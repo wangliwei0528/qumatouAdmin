@@ -1,5 +1,13 @@
 <template>
     <div>
+      <el-row class='top'>
+        <div class="breadcrumb">
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item>
+                <el-breadcrumb-item>轮播管理</el-breadcrumb-item>
+            </el-breadcrumb>
+        </div>
+    </el-row>
         <el-card>
             <div slot="header" class='header'>
                 <!-- 轮播类型 -->
@@ -57,7 +65,7 @@
                 <el-table-column
                 prop="price"
                 align='center'
-                label="价格">
+                label="价格">                
                 </el-table-column>             
                 <el-table-column prop="is_show" label="状态" align="center">
                   <template slot-scope="scope">
@@ -110,7 +118,9 @@
     </div>
 </template>
 <script>
+import Mycomponent from "@/components/common/alert";
 export default {
+  components: {  Mycomponent },
   data() {
     return {
       isshow: true,
@@ -155,10 +165,12 @@ export default {
           type:this.type
         }
       }).then(res => {
-        this.dataList = res.data.carousel_List.data;
-        for (let i = 0; i < this.dataList.length; i++) {
-          this.dataList[i].price = this.dataList[i].price / 100;
-        }
+        //接受数据以及处理价格       
+        this.dataList = res.data.carousel_List.data.map(item=>{
+          item.price=item.price/100;
+          return item
+        });
+        //是否显示分页
         if (res.data.carousel_List.total < res.data.carousel_List.per_page) {
           this.pagination = false;
         } else {

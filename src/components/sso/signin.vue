@@ -14,10 +14,10 @@
 					<el-input v-model.trim="form.mobile" clearable placeholder="请输入手机号码" :maxlength="11" ></el-input>
 				</el-form-item>
         <el-form-item label="" prop="pwd" v-show='password'>
-					<el-input v-model.trim="form.pwd" clearable placeholder="请输入密码" :maxlength="6" type='password' @keyup.enter.native='login()'></el-input>
+					<el-input v-model.trim="form.pwd" clearable placeholder="请输入密码"  type='password' @keyup.enter.native='login()'></el-input>
 				</el-form-item>
 				<el-form-item label="" prop="code" v-show='duanxin'>
-					<el-input type="text" v-model.trim="form.sms" clearable placeholder="请输入手机验证码" :maxlength="20" style='width:280px' @keyup.enter.native='login()'></el-input>
+					<el-input type="text" v-model.trim="form.sms" clearable placeholder="请输入手机验证码" :maxlength="20" style='width:250px' @keyup.enter.native='login()'></el-input>
 				  <el-button type="primary" style='float:right' @click="getCode">
             <span v-show="show" >获取验证码</span>
             <span v-show="!show" class="count">{{count}} s后重新发送</span>
@@ -91,6 +91,7 @@ export default {
               pwd: this.form.pwd
             };
             this.$axios.post("/api/admin/login", data).then(res => {
+              // console.log(res)
               if (res.data.status == 1) {
                 this.$router.push("/views/merchant/merchant");
                 localStorage.setItem("date", res.data.expires_in); //token存储日期
@@ -110,11 +111,13 @@ export default {
               sms: this.form.sms
             };
             this.$axios.post("/api/admin/getSms", data).then(res => {
+              // console.log(res)
               this.$router.push("/views/merchant/merchant");
-              localStorage.setItem("date", res.data.expires_in); //token存储日期
-              localStorage.setItem("token", res.data.token); //token
-              localStorage.setItem("tag", res.data.tag); //判断信息完整与否的参数
-              localStorage.setItem("mobile", res.data.mobile); //登入手机号
+                localStorage.setItem("date", res.data.expires_in); //token存储日期
+                localStorage.setItem("token", res.data.token); //token
+                localStorage.setItem("tag", res.data.tag); //判断信息完整与否的参数
+                localStorage.setItem("mobile", res.data.mobile); //登入手机号
+                localStorage.setItem("is_proxy", res.data.is_proxy); //权限是否显示代购代销
             });
           } else {
             return false;

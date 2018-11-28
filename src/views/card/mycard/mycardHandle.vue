@@ -14,214 +14,203 @@
 </style>
 
 <template>
-    <div class="addcard">
-        <el-card>
-            <div slot="header" >
-                <span>{{'编辑卡券'}}</span>
-            </div>
-            <el-form ref="form" :model="form" label-width="100px" style='width:800px' :rules="rules">                
-                <el-form-item label="优惠券类型" prop='type'>
-                    <el-select v-model="form.type" placeholder="请选择优惠券类型" >                                                                      
-                         <el-option 
-                         v-for='item in form.types'
-                         :key='item.key'
-                         :label='item.val'
-                         :value='item.key'>                         
-                         </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="优惠券名称" prop='m_name'>
-                    <el-input v-model="form.m_name" placeholder="优惠券名称"></el-input>
-                </el-form-item>
-                <el-form-item label="代金券面值" v-if='form.type==3' prop='amount'>
-                    <el-input v-model="form.amount" placeholder="代金券面值" type='number'></el-input>
-                </el-form-item>
-                <el-form-item label="满足金额" v-if='form.type==3' prop='amount'>
-                    <el-input v-model="form.min_money" placeholder="请输入满足条件的金额" type='number' ></el-input>
-                </el-form-item>
-                <el-form-item label="优惠券折扣" v-if='form.type==2' prop='amount'>
-                    <el-input v-model="form.amount" placeholder="请输入1-10的优惠券折扣" type='number' :max='10' :min="1"></el-input>
-                </el-form-item>
-                 <el-form-item label="满足金额" v-if='form.type==2' prop='amount'>
-                    <el-input v-model="form.min_money" placeholder="请输入满足条件的金额" type='number' ></el-input>
-                </el-form-item>
-                <el-form-item label="优惠券满减" v-if='form.type==1' prop='min_money'>
-                    <el-col :span="11">
-                        <el-input v-model="form.min_money" placeholder="满多少元" type='number'></el-input>
-                    </el-col>
-                    <el-col class="line" :span="2">&nbsp;&nbsp;减</el-col>
-                    <el-col :span="11">
-                        <el-input v-model="form.amount" placeholder="减多少元" type='number'></el-input>
-                    </el-col>
-                </el-form-item>                        
-                <el-form-item label="是否有期限" prop='dat'>
-                  <el-switch
-                    v-model="form.dat"
-                    active-color="#66b1ff"
-                    active-value=1
-                    inactive-value=0
-                    inactive-color="#ccc">
-                  </el-switch>
-                    <!-- <el-radio-group v-model="form.dat">
+  <div class="addcard">
+    <el-row class="top">
+      <div class="breadcrumb">
+        <el-breadcrumb separator="/">
+          <el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ path: 'mycard' }">我的卡券</el-breadcrumb-item>
+          <el-breadcrumb-item>编辑卡券</el-breadcrumb-item>
+        </el-breadcrumb>
+      </div>
+    </el-row>
+    <el-card>
+      <div slot="header" class="header">
+        <span>{{'编辑卡券'}}</span>
+      </div>
+      <el-form ref="form" :model="form" label-width="100px" style="width:800px" :rules="rules">
+        <el-form-item label="优惠券类型" prop="type">
+          <el-select v-model="form.type" placeholder="请选择优惠券类型">
+            <el-option
+              v-for="item in form.types"
+              :key="item.key"
+              :label="item.val"
+              :value="item.key"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="优惠券名称" prop="m_name">
+          <el-input v-model="form.m_name" placeholder="优惠券名称"></el-input>
+        </el-form-item>
+        <el-form-item label="代金券面值" v-if="form.type==3" prop="amount">
+          <el-input v-model="form.amount" placeholder="代金券面值" type="number"></el-input>
+        </el-form-item>
+        <el-form-item label="满足金额" v-if="form.type==3" prop="amount">
+          <el-input v-model="form.min_money" placeholder="请输入满足条件的金额" type="number"></el-input>
+        </el-form-item>
+        <el-form-item label="优惠券折扣" v-if="form.type==2" prop="amount">
+          <el-input
+            v-model="form.amount"
+            placeholder="请输入1-10的优惠券折扣"
+            type="number"
+            :max="10"
+            :min="1"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="满足金额" v-if="form.type==2" prop="amount">
+          <el-input v-model="form.min_money" placeholder="请输入满足条件的金额" type="number"></el-input>
+        </el-form-item>
+        <el-form-item label="优惠券满减" v-if="form.type==1" prop="min_money">
+          <el-col :span="11">
+            <el-input v-model="form.min_money" placeholder="满多少元" type="number"></el-input>
+          </el-col>
+          <el-col class="line" :span="2">&nbsp;&nbsp;减</el-col>
+          <el-col :span="11">
+            <el-input v-model="form.amount" placeholder="减多少元" type="number"></el-input>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="是否有期限" prop="dat">
+          <el-switch
+            v-model="form.dat"
+            active-color="#66b1ff"
+            active-value="1"
+            inactive-value="0"
+            inactive-color="#ccc"
+          ></el-switch>
+          <!-- <el-radio-group v-model="form.dat">
                         <el-radio :label="0" :value='form.dat'>不限制</el-radio>
                         <el-radio :label="1" :value='form.dat'>有限制</el-radio>                    
-                    </el-radio-group> -->
-                </el-form-item>
-                <template v-if='form.dat==1'>
-                    <el-form-item label='开始时间' prop='begin_time'>                 
-                        <div class="block" style='margin-left:0'>
-                        <el-date-picker
-                        v-model="form.begin_time"
-                        type="date"
-                        value-format='yyyy-MM-dd'
-                        default-value
-                        start-placeholder
-                        @change="changeTime"
-                        :picker-options="pickerBeginDateBefore"
-                        placeholder="选择日期">
-                        </el-date-picker>
-                    </div>          
-                    </el-form-item>
-                    <el-form-item label='结束时间' prop='end_time'>  
-                        <div class="block" style='margin-left:0'>
-                            <el-date-picker
-                            v-model="form.end_time"
-                            :picker-options="pickerBeginDateAfter"
-                            type="date"
-                            end-placeholder
-                            value-format='yyyy-MM-dd'
-                            placeholder="选择日期">
-                            </el-date-picker>
-                        </div>       
-                    </el-form-item>
-                </template>                
-                <el-form-item label="是否限制商品" prop='usetype'>
-                   <el-switch
-                    v-model="form.usetype"
-                    active-color="#66b1ff"
-                    active-value=2
-                    inactive-value=1
-                    inactive-color="#ccc">
-                  </el-switch>
-                    <!-- <el-radio-group v-model="form.usetype">
+          </el-radio-group>-->
+        </el-form-item>
+        <template v-if="form.dat==1">
+          <el-form-item label="开始时间" prop="begin_time">
+            <div class="block" style="margin-left:0">
+              <el-date-picker
+                v-model="form.begin_time"
+                type="date"
+                value-format="yyyy-MM-dd"
+                default-value
+                start-placeholder
+                @change="changeTime"
+                :picker-options="pickerBeginDateBefore"
+                placeholder="选择日期"
+              ></el-date-picker>
+            </div>
+          </el-form-item>
+          <el-form-item label="结束时间" prop="end_time">
+            <div class="block" style="margin-left:0">
+              <el-date-picker
+                v-model="form.end_time"
+                :picker-options="pickerBeginDateAfter"
+                type="date"
+                end-placeholder
+                value-format="yyyy-MM-dd"
+                placeholder="选择日期"
+              ></el-date-picker>
+            </div>
+          </el-form-item>
+        </template>
+        <el-form-item label="是否限制商品" prop="usetype">
+          <el-switch
+            v-model="form.usetype"
+            active-color="#66b1ff"
+            active-value="2"
+            inactive-value="1"
+            inactive-color="#ccc"
+          ></el-switch>
+          <!-- <el-radio-group v-model="form.usetype">
                         <el-radio :label="1" :value='form.usetype'>不限制</el-radio>
                         <el-radio :label="2" :value='form.usetype'>有限制</el-radio>                    
-                    </el-radio-group> -->
-                </el-form-item>
-                <el-form-item label="选择商品" v-if='form.usetype==2' prop='sku_goods'>
-                  <el-button type="text" @click="goodChoose">编辑商品</el-button> 
-                </el-form-item>
-                <el-table v-if='data!=""'
-                    :data="data"
-                    style="width:80%;margin-left:100px">
-                    <el-table-column
-                    prop="takeaway.title"
-                    label="商品名称"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                    prop="takeaway.cover"
-                    label="封面图">
-                    <template slot-scope="scope">
-                        <img  :src="scope.row.takeaway.cover?scope.row.takeaway.cover:scope.row.cover" alt="" style="width: 30px;height: 30px">
-                    </template>
-                    </el-table-column>
-                    <el-table-column
-                    prop="takeaway.price"
-                    label="商品价格">
-                    <template slot-scope="scope">
-                        {{scope.row.takeaway.price?scope.row.takeaway.price:scope.row.price/100}}
-                    </template>         
-                    </el-table-column>
-                    <el-table-column
-                    fixed="right"
-                    label="操作"
-                    align="center">
-                    <template slot-scope="scope">
-                      <el-button 
-                      size="small"
-                      @click.native.prevent="deleteRow(scope.$index, scope.row)"
-                      >
-                        删除
-                      </el-button>        
-                    </template>
-                   </el-table-column>
-                </el-table>
-                <el-form-item label="优惠券简介" prop='content'>
-                    <el-input type="textarea" v-model="form.content" :maxlength='20' :rows='5' placeholder="请输入商品简介"></el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="onSubmit">保存</el-button>
-                    <el-button @click='quxiao'>取消</el-button>
-                </el-form-item>
-            </el-form>
-        </el-card>
-        <!-- 选择商品列表 -->
-        <el-dialog title="商品库" :visible.sync="goodlist">
-            <el-card>
-                <div slot="header">
-                    <div class="search">
-                         <el-input placeholder="请输入内容">
-                            <i slot="prefix" class="el-input__icon el-icon-search"></i>
-                        </el-input>
-                    </div>  
-                </div>
-                <el-table
-                    :data="goodlistdata"
-                    border
-                     :row-key="getRowKeys"
-                    @selection-change="selsChange"
-                    style="width: 100%">
-                    <el-table-column
-                    type="selection"
-                     :reserve-selection="true"
-                    width="55">
-                    </el-table-column>
-                    <el-table-column
-                    prop="takeaway.title"
-                    label="商品名称"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                    prop="takeaway_itemTitle"
-                    label="sku名称"
-                    width="180">
-                    </el-table-column>
-                    <el-table-column
-                    prop="cover"
-                    label="封面图"
-                    width="180">
-                    <template slot-scope="scope">
-                        <img  :src="scope.row.cover" alt="" style="width: 50px;height: 50px">
-                    </template>
-                    </el-table-column>
-                    <el-table-column
-                    prop="price"
-                    label="商品价格"
-                    width="180">
-                    </el-table-column>
-                </el-table>
-                <!-- 分页设置 -->
-                <div class="block" v-if="pagination">
-                    <el-pagination
-                        @current-change="handleCurrentChange"
-                        :current-page="currentPage"
-                        :page-sizes="[per_page]"
-                        :page-size="per_page"
-                        layout="total, sizes, prev, pager, next, jumper"
-                        :total="total"
-                        :background="true">
-                    </el-pagination>
-                </div>
-                <!-- 分页设置 -->
-            </el-card>                                  
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="cancle">取 消</el-button>
-                <el-button type="primary" @click="save">确 定</el-button>
-            </div>
-        </el-dialog>
-        <!-- 选择商品列表 -->        
-    </div>
+          </el-radio-group>-->
+        </el-form-item>
+        <el-form-item label="选择商品" v-if="form.usetype==2" prop="sku_goods">
+          <el-button type="text" @click="goodChoose">编辑商品</el-button>
+        </el-form-item>
+        <el-table v-if="data!=''" :data="data" style="width:80%;margin-left:100px">
+          <el-table-column prop="takeaway.title" label="商品名称"></el-table-column>
+          <el-table-column prop="takeaway.cover" label="封面图">
+            <template slot-scope="scope">
+              <img
+                :src="scope.row.takeaway.cover?scope.row.takeaway.cover:scope.row.cover"
+                alt
+                style="width: 30px;height: 30px"
+              >
+            </template>
+          </el-table-column>
+          <el-table-column prop="takeaway.price" label="商品价格">
+            <template
+              slot-scope="scope"
+            >{{scope.row.takeaway.price?scope.row.takeaway.price:scope.row.price/100}}</template>
+          </el-table-column>
+          <el-table-column fixed="right" label="操作" align="center">
+            <template slot-scope="scope">
+              <el-button size="small" @click.native.prevent="deleteRow(scope.$index, scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-form-item label="优惠券简介" prop="content">
+          <el-input
+            type="textarea"
+            v-model="form.content"
+            :maxlength="20"
+            :rows="5"
+            placeholder="请输入商品简介"
+          ></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit">保存</el-button>
+          <el-button @click="quxiao">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
+    <!-- 选择商品列表 -->
+    <el-dialog title="商品库" :visible.sync="goodlist">
+      <el-card>
+        <div slot="header">
+          <div class="search">
+            <el-input placeholder="请输入内容">
+              <i slot="prefix" class="el-input__icon el-icon-search"></i>
+            </el-input>
+          </div>
+        </div>
+        <el-table
+          :data="goodlistdata"
+          border
+          :row-key="getRowKeys"
+          @selection-change="selsChange"
+          style="width: 100%"
+        >
+          <el-table-column type="selection" :reserve-selection="true" width="55"></el-table-column>
+          <el-table-column prop="takeaway.title" label="商品名称"></el-table-column>
+          <el-table-column prop="takeaway_itemTitle" label="sku名称" width="180"></el-table-column>
+          <el-table-column prop="cover" label="封面图" width="180">
+            <template slot-scope="scope">
+              <img :src="scope.row.cover" alt style="width: 50px;height: 50px">
+            </template>
+          </el-table-column>
+          <el-table-column prop="price" label="商品价格" width="180"></el-table-column>
+        </el-table>
+        <!-- 分页设置 -->
+        <div class="block" v-if="pagination">
+          <el-pagination
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-sizes="[per_page]"
+            :page-size="per_page"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total"
+            :background="true"
+          ></el-pagination>
+        </div>
+        <!-- 分页设置 -->
+      </el-card>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancle">取 消</el-button>
+        <el-button type="primary" @click="save">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 选择商品列表 -->
+  </div>
 </template>
 <script>
 export default {
@@ -347,14 +336,17 @@ export default {
       //调接口获取商品列表信息
       this.$axios
         .get("/api/admin/skugoods_info", {
-          params:{
-            page:this.currentPage?this.currentPage:this.page
+          params: {
+            page: this.currentPage ? this.currentPage : this.page
           }
         })
         .then(res => {
           if (res) {
             //商品列表信息
-            this.goodlistdata = res.data.data;
+            this.goodlistdata = res.data.data.map(item => {
+              item.price = item.price / 100;
+              return item;
+            });
             //判断是否显示分页器
             if (res.data.total < res.data.per_page) {
               this.pagination = false;
@@ -372,7 +364,7 @@ export default {
     //页码变更显示当前页的数据
     handleCurrentChange: function(currentPage) {
       this.currentPage = currentPage;
-      this.goodChoose()
+      this.goodChoose();
     },
     cancle() {
       //隐藏商品列表

@@ -30,7 +30,10 @@ Vue.use(BaiduMap, {
 
 import Axios from 'axios'
 Vue.prototype.$axios = Axios;
-import {Loading,Message} from 'element-ui'
+import {
+  Loading,
+  Message
+} from 'element-ui'
 
 
 //拦截器
@@ -49,7 +52,7 @@ Axios.interceptors.request.use(
       config.headers.common['Authorization'] = `Bearer ` + localStorage.getItem('token');
       config.headers.common['Accept'] = 'application/vnd.lingmo.v1+json'
       config.headers.common['Content-Type'] = 'application/x-www-form-urlencoded'
-    }else{
+    } else {
       router.replace({
         path: '/' // 到登录页重新获取token
       })
@@ -78,6 +81,10 @@ Axios.interceptors.response.use(
       if (response.data.status == 1) {
         Message.success({
           message: response.data.message
+        })
+      } else if (response.data.status == 2) {
+        router.replace({
+          path: '/'
         })
       } else {
         Message.warning({

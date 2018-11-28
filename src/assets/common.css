@@ -150,3 +150,9 @@ html, body {
 	float:left;
 	margin-left:50px
 }
+.header{
+	color: rgb(64, 158, 255);
+}
+.top{
+	margin-bottom:20px;
+}

@@ -1,10 +1,10 @@
 <template>
   <div class="linkage">
     <el-dialog
-      title="选择代销商户"
+      title="选择商户"
       :visible.sync="centerDialogVisible"
       :close-on-click-modal=false
-      :show-close=false
+      :show-close=true
       width="70%"
       center>
       <!-- 三级联动 -->
@@ -218,15 +218,18 @@ export default {
             page: this.currentPage,
             title: this.title,
             purchase_id: this.form.check,
-            type: 1
+            type:1
           }
         })
           .then(res => {
             if (res.data.status == 1) {
-              //过滤已经代购的
+              //过滤已经代购的            
               for (var i = 0; i < this.multipleSelectionAll.length; i++) {
                 for (var j = 0; j < res.data.goos_List.data.length; j++) {
-                  if (res.data.goos_List.data[j].id === this.multipleSelectionAll[i].id) {
+                  if (
+                    res.data.goos_List.data[j].id ===
+                    this.multipleSelectionAll[i].id
+                  ) {
                     // console.log(res.data.goos_List.data[j].id);
                     // console.log(this.multipleSelectionAll[i].id);
                     res.data.goos_List.data.splice(j, 1);

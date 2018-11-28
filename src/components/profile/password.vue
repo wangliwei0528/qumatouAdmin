@@ -1,6 +1,6 @@
 <template>
 	<div class="workplace">
-		<el-row>
+		<el-row class='top'>
 			<div class="breadcrumb">
 				<el-breadcrumb separator="/">
 					<el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item>
@@ -8,24 +8,26 @@
 				</el-breadcrumb>
 			</div>
 		</el-row>
-		<el-row class="form">
-			<el-col :span="8">
-				<el-form :model="form" :rules="rules" ref="form" label-width="100px">
-					<el-form-item label="原始密码" prop="origin">
-						<el-input type="password" v-model.trim="form.origin" :maxlength="20"></el-input>
-					</el-form-item>
-					<el-form-item label="新的密码" prop="newpwd">
-						<el-input type="password" v-model.trim="form.newpwd" :maxlength="20"></el-input>
-					</el-form-item>
-					<el-form-item label="再次确认" prop="retype">
-						<el-input type="password" v-model.trim="form.retype" :maxlength="20"></el-input>
-					</el-form-item>
-					<el-form-item>
-						<el-button type="primary" @click="handleSubmit('form')">更新</el-button>
-					</el-form-item>
-				</el-form>
-			</el-col>
-		</el-row>
+		<el-card>			
+			<el-row class="form">
+				<el-col :span="8">
+					<el-form :model="form" :rules="rules" ref="form" label-width="100px">
+						<el-form-item label="原始密码" prop="origin">
+							<el-input type="password" v-model.trim="form.origin" :maxlength="20"></el-input>
+						</el-form-item>
+						<el-form-item label="新的密码" prop="newpwd">
+							<el-input type="password" v-model.trim="form.newpwd" :maxlength="20"></el-input>
+						</el-form-item>
+						<el-form-item label="再次确认" prop="retype">
+							<el-input type="password" v-model.trim="form.retype" :maxlength="20"></el-input>
+						</el-form-item>
+						<el-form-item>
+							<el-button type="primary" @click="handleSubmit('form')">更新</el-button>
+						</el-form-item>
+					</el-form>
+				</el-col>
+			</el-row>
+		</el-card>		
 	</div>
 </template>
 

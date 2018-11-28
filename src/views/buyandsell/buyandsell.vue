@@ -1,5 +1,13 @@
 <template>
   <div>
+    <el-row class='top'>
+        <div class="breadcrumb">
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item>
+                <el-breadcrumb-item>代购代销</el-breadcrumb-item>
+            </el-breadcrumb>
+        </div>
+    </el-row>
     <Buy @listenChild='queryData' :title='title' :multipleSelectionAll='multipleSelectionAll' ref="childMethod"/>
     <el-card class="box-card">
         <div slot="header" class='header'>
@@ -35,40 +43,43 @@
             prop="title"
             label="名称"
             align="center">
-          </el-table-column>
-          <el-table-column
-            prop="subtitle"
-            label="标题"
-            align="center">
-          </el-table-column>
+          </el-table-column>          
           <el-table-column
             prop="cover"
-            label="封面"
+            label="SKU封面"
             align="center">
             <template slot-scope="scope">
-              <img :src="scope.row.cover" alt="">
+              <img :src="scope.row.cover" alt="" style='width:50px;height:50px'>
             </template>
           </el-table-column>
           <el-table-column
             prop="cate_name"
             label="分类"
             align="center">
-          </el-table-column>
-          <el-table-column
-            prop="cun_name"
-            label="品牌"
-            align="center">
-          </el-table-column>
+          </el-table-column>          
           <el-table-column
             prop="brand_name"
-            label="单位"
+            label="品牌"
             align="center">
           </el-table-column>
           <el-table-column
             prop="price"
             label="价格(元)"
             align="center">
-          </el-table-column>              
+          </el-table-column> 
+          <!-- <el-table-column
+            prop="takeaway_itemTitle"
+            label="规格值"
+            align="center">
+          </el-table-column>  -->
+          <!-- <el-table-column
+            prop="quality"
+            label="库存"
+            align="center">
+            <template slot-scope="scope">
+              <el-input v-model.number="scope.row.quality" type='number' :max='scope.row.quality' :min='0'  placeholder="请输入库存" @blur='change(scope.$index, scope.row)' @keyup.enter.native="change(scope.$index, scope.row)"></el-input>
+            </template>
+          </el-table-column>               -->
         </el-table>
         <div style='margin:20px 0;'>
           <div style='float:right' v-if="tableData.length>10">
@@ -294,12 +305,11 @@ export default {
       this.ids = this.multipleSelection.map(item => item.id);
     },
     queryData(data) {
-      console.log(this.multipleSelectionAll);
-      //以后要排除已经选择的
-      this.tableData = data.data.goos_List.data;
-      for (let i = 0; i < this.tableData.length; i++) {
-        this.tableData[i].price = this.tableData[i].price / 100;
-      }
+      //以后要排除已经选择的     
+      this.tableData = data.data.goos_List.data.map(item=>{
+        item.price=item.price/100
+        return item
+      })
       this.wholes_id = data.data.wholes_id;
       this.pagination.totalRows = data.data.goos_List.total;
       this.pagination.per_page = data.data.goos_List.per_page;

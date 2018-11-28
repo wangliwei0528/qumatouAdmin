@@ -1,15 +1,21 @@
 <template>
     <div class="pushlist">
-        <div style='margin-bottom:20px'>
+        <el-row class='top'>
+        <div class="breadcrumb">
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item>
+                <el-breadcrumb-item :to="{name:'pushcard'}">卡券投放</el-breadcrumb-item>
+                <el-breadcrumb-item>投放列表</el-breadcrumb-item>
+            </el-breadcrumb>
+        </div>
+    </el-row>
+        <el-card>
+            <div style='margin-bottom:20px'>
                 <el-button-group>
                     <el-button type="primary" @click='nomal'>正常</el-button>
                     <el-button type="primary" @click='dated'>已过期</el-button>
                 </el-button-group>
         </div>
-        <el-card>
-            <div slot="header" class='header'>
-                <span>投放列表</span>    
-            </div>
             <div class="search">    
                 <div>
                     <el-input placeholder="请输入内容"  class="input-with-select" 

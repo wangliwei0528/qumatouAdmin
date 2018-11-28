@@ -259,11 +259,11 @@ const home = {
 			}			
 		},	
 		{
-			path: '/views/buyed/buyed',
+			path: '/views/buyandsell/buyed',
 			name: 'buyed',
 			component(resolve) {
-				require.ensure(['@/views/buyed/buyed'], () => {
-					resolve(require('@/views/buyed/buyed'))
+				require.ensure(['@/views/buyandsell/buyed'], () => {
+					resolve(require('@/views/buyandsell/buyed'))
 				})
 			},
 			meta: {
@@ -306,7 +306,20 @@ const home = {
 				})
 			},
 			meta: {
-				title: '添加轮播',
+				title: '采购商品',
+				requiresAuth: true
+			}			
+		},
+		{
+			path: '/views/purchase/purchaselist',
+			name: 'purchaselist',
+			component(resolve) {
+				require.ensure(['@/views/purchase/purchaselist'], () => {
+					resolve(require('@/views/purchase/purchaselist'))
+				})
+			},
+			meta: {
+				title: '采购列表',
 				requiresAuth: true
 			}			
 		},

@@ -1,7 +1,16 @@
 <template>
     <div class="merchant">
+       <el-row class='top'>
+            <div class="breadcrumb">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item>
+                    <el-breadcrumb-item :to="{name:'merchant'}">商户管理</el-breadcrumb-item>
+                    <el-breadcrumb-item>商户信息</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
+        </el-row>
        <el-card class="box-card">
-            <div slot="header" class="clearfix">
+            <div slot="header" class='header'>
                 <span>基本信息</span>
                 <span v-if='tag==0' style='color:red'>(请完善您的信息)</span>
             </div> 
