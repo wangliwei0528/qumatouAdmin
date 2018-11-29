@@ -322,7 +322,7 @@ const home = {
 				title: '采购列表',
 				requiresAuth: true
 			}			
-		},
+		},		
 		
 		
 					

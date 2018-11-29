@@ -212,16 +212,16 @@ export default {
       if (this.form.check != "") {
         if(this.title){
           var data={
-            wholes_id: this.form.check,
             page: this.currentPage ? this.currentPage : this.page,
             title: this.title,
             purchase_id: this.form.check,
+            type:1
           }
         }else{
           var data={
-            wholes_id: this.form.check,
             page: this.currentPage ? this.currentPage : this.page,
             purchase_id: this.form.check,
+            type:1
           }
         }
         this.$axios({
@@ -230,21 +230,7 @@ export default {
           data: data
         })
           .then(res => {
-            if (res.data.status == 1) {
-              //过滤已经代购的            
-              for (var i = 0; i < this.multipleSelectionAll.length; i++) {
-                for (var j = 0; j < res.data.goos_List.data.length; j++) {
-                  if (
-                    res.data.goos_List.data[j].id ===
-                    this.multipleSelectionAll[i].id
-                  ) {
-                    // console.log(res.data.goos_List.data[j].id);
-                    // console.log(this.multipleSelectionAll[i].id);
-                    res.data.goos_List.data.splice(j, 1);
-                    j--;
-                  }
-                }
-              }
+            if (res.data.status == 1) {              
               this.$emit("listenChild", res); //向父组件传值
               this.centerDialogVisible = false;
             }

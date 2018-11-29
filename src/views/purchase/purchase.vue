@@ -1,5 +1,22 @@
 <template>
   <div>
+    <el-dialog
+      title="微信扫码支付"
+      :visible.sync="pic"
+      width="30%"
+      center>
+      <div style='width:210px;margin-left:50%;transform:translateX(-50%)'>
+        <div style='font-weight:bold'>
+         <span>订单编号:</span><span>{{trade_no}}</span>
+       </div>
+        <div>       
+          <img :src="url" alt="" style='width:200px;height:200px;'>       
+        </div> 
+        <div class='btn'>
+          <span>总金额:</span><span>¥{{total}}</span>
+        </div> 
+      </div>      
+    </el-dialog>
     <el-row class="top">
       <div class="breadcrumb">
         <el-breadcrumb separator="/">
@@ -43,14 +60,16 @@
         <el-table-column prop="brand_name" label="品牌" align="center"></el-table-column>
         <el-table-column prop="price" label="批发价(元)" align="center"></el-table-column>
         <el-table-column prop="takeaway_itemTitle" label="规格值" align="center"></el-table-column>
-        <el-table-column prop="quality" label="库存" align="center">
+        <el-table-column prop="quality" label="库存" align="center"></el-table-column>
+        <el-table-column prop="quality" label="采购量(件)" align="center">
           <template slot-scope="scope">
-            <el-input
-              v-model.number="scope.row.quality"
+            <el-input              
               type="number"
+              :value='scope.row.quality'
               :max="scope.row.quality"
               :min="0"
-              placeholder="请输入库存"
+              :placeholder="scope.row.quality"
+              @change="getval"
               @blur="change(scope.$index, scope.row)"
               @keyup.enter.native="change(scope.$index, scope.row)"
             ></el-input>
@@ -80,7 +99,6 @@
           >
             <el-button type="primary" size="small" @click="handleChooseData">批量采购</el-button>
           </el-badge>
-          <!-- <el-checkbox @change="toggleSelect(data)" size="mini" style='margin-right:40px'>全选/反选</el-checkbox> -->
           <el-button type="primary" size="small" @click="allPurchase">一键采购</el-button>
         </div>
       </div>
@@ -93,7 +111,7 @@
   </div>
 </template>
 <script>
-import Buy from "@/components/common/buyandsell";
+import Buy from "@/components/common/purchase";
 import Mycomponent from "@/components/common/alert";
 export default {
   components: { Buy, Mycomponent },
@@ -102,9 +120,14 @@ export default {
       getRowKeys(row) {
         return row.id;
       },
-      quality: "",
+      url:'',
+      pic: false,//支付页面是否显示
+      total:'',//总金额
+      trade_no:'',//订单编号
+      val:'',//采购量
       isshow: true,
       istrue: true,
+      tempArr:[],
       multipleSelectionAll: [], // 所有选中的数据包含跨页数据
       multipleSelection: [], // 当前页选中的数据
       idKey: "id", // 标识列表数据中每一行的唯一键的名称
@@ -170,11 +193,17 @@ export default {
                 method: "post",
                 url: "api/admin/purchase_Off",
                 data: {
-                  sku_goods_id: this.ids
+                  sku_goods: this.tempArr
                 }
               }).then(res => {
-                this.getData();
-                this.istrue = true;
+                console.log(res)
+                if(res.data.status==1){
+                  this.url='data:image/png;base64,'+res.data.data.qrcode;
+                  this.trade_no=res.data.data.trade_no;
+                  this.total=res.data.data.total;
+                  this.pic=true;//显示二维码
+                  this.istrue = true;//清空购物车消息
+                }               
               });
             })
             .catch(() => {
@@ -289,6 +318,7 @@ export default {
       this.ids = this.multipleSelection.map(item => item.id);
     },
     queryData(data) {
+      // console.log(data)
       this.tableData = data.data.goos_List.data.map(item => {
         item.price = item.price / 100;
         return item;
@@ -344,8 +374,21 @@ export default {
       // console.log(this.$refs.childMethod); //返回的是一个vue对象，所以可以直接调用其方法
       this.$refs.childMethod.onSubmit(); //调用子组件的方法
     },
+    getval(val){
+      this.val=val
+    },
     change(index, row) {
-      console.log(row.id);
+      let goods={
+        id:row.id,
+        qty:this.val
+      };
+      if(row.qty>row.quality){
+        this.$message({
+          type: "warning",
+          message: "库存不够,请重新输入"
+        });
+      }
+      this.tempArr.push(goods)
     }
   }
 };
@@ -354,5 +397,15 @@ export default {
 <style scoped>
 .box-card {
   padding-bottom: 20px;
+}
+.btn{
+  width:200px;
+  height:30px;
+  background:#1aad19;
+  text-align:center;
+  font-weight:bold;
+  color:#fff;
+  font-size:20px;
+  padding:10px 0
 }
 </style>

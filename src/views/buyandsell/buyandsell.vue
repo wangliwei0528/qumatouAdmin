@@ -146,22 +146,7 @@ export default {
     };
   },
   created() {
-    this.tag = localStorage.getItem("tag"); //判断是否完善信息
-    // let a = [["白色", "黑色"], ["XL", "L"]].reduce(
-    //   function(a, b) {
-    //     return a
-    //       .map(function(x) {
-    //         return b.map(function(y) {
-    //           return x.concat(y);
-    //         });
-    //       })
-    //       .reduce(function(a, b) {
-    //         return a.concat(b);
-    //       }, []);
-    //   },
-    //   [[]]
-    // );
-    // console.log(a);
+    this.tag = localStorage.getItem("tag"); //判断是否完善信息    
   },
   mounted() {},
   methods: {
@@ -305,6 +290,7 @@ export default {
       this.ids = this.multipleSelection.map(item => item.id);
     },
     queryData(data) {
+      // console.log(data)
       //以后要排除已经选择的     
       this.tableData = data.data.goos_List.data.map(item=>{
         item.price=item.price/100
