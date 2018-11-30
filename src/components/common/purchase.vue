@@ -43,7 +43,7 @@
                             </div>
                             <span class='title'>                            
                               <el-checkbox-group v-model="form.check" @change="onCheckChange">
-                                <el-checkbox :label="item.id" :value='item.id'>{{item.title}}</el-checkbox>                                
+                                <el-checkbox :label="item.id" :value='item.id' style='white-space: wrap;'>{{item.title}}</el-checkbox>                                
                               </el-checkbox-group>
                             </span>
                       </el-card>                      
@@ -259,7 +259,7 @@ export default {
 }
 .card {
   display: inline-block;
-  padding: 0 20px 50px;
+  padding: 0 98px 50px;
   width: 130px;
   height: 130px;
   margin-right: 30px;
@@ -273,5 +273,10 @@ export default {
   display: inline-block;
   width: 100%;
   text-align: center;
+}
+.el-checkbox, .el-checkbox__input {
+    display: inline-block;
+    position: relative;
+    white-space: wrap;
 }
 </style>

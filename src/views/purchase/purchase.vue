@@ -1,21 +1,47 @@
 <template>
   <div>
-    <el-dialog
-      title="微信扫码支付"
-      :visible.sync="pic"
-      width="30%"
-      center>
-      <div style='width:210px;margin-left:50%;transform:translateX(-50%)'>
-        <div style='font-weight:bold'>
-         <span>订单编号:</span><span>{{trade_no}}</span>
-       </div>
-        <div>       
-          <img :src="url" alt="" style='width:200px;height:200px;'>       
-        </div> 
-        <div class='btn'>
-          <span>总金额:</span><span>¥{{total}}</span>
-        </div> 
-      </div>      
+    <el-dialog title="微信扫码支付" :visible.sync="pic" width="30%" center>
+      <div style="width:220px;margin-left:50%;transform:translateX(-50%)">
+        <div style="font-weight:bold">
+          <span>订单编号:</span>
+          <span>{{trade_no}}</span>
+        </div>
+        <div>
+          <img :src="url" alt style="width:200px;height:200px;margin:0 auto">
+        </div>
+        <div class="btn">
+          <span>总金额:</span>
+          <span>¥{{total}}</span>
+        </div>
+      </div>
+    </el-dialog>
+    <el-dialog title="采购列表" :visible.sync="car" width="30%" center>
+      <div style="padding:0 30px 60px">
+        <ul>
+          <li v-for="(item,index) in multipleSelectionAll" :key="index">
+            <div style="width:100%;height:100px">
+              <div style="width:80px;height:80px;float:left">
+                <img :src="item.cover" alt style="width:100%;height:100%">
+              </div>
+              <div style="float:left;margin-top:15px;margin-left:30px">
+                <div>
+                  <span>名称:{{item.title}}</span>
+                  <br>
+                  <el-tag type="info" size="mini">{{item.takeaway_itemTitle}}</el-tag>
+                  <br>
+                  <span style="color:red">单价:¥{{item.price}}</span>
+                  <!-- <span v-if='item.qty!=""'>数量:{{item.qty}}</span>
+                  <span>数量:{{item.quality}}</span> -->
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <div style="margin-left:50%;transform:translateX(-50%)">
+          <el-button type="primary" size="small" @click="handleChooseData">确认采购</el-button>
+          <el-button size="small" @click="back">取消</el-button>
+        </div>
+      </div>
     </el-dialog>
     <el-row class="top">
       <div class="breadcrumb">
@@ -49,7 +75,7 @@
         :row-key="getRowKeys"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55" :reserve-selection="true" align="center"></el-table-column>
+        <el-table-column type="selection" width="55" align="center"></el-table-column>
         <el-table-column prop="title" label="名称" align="center"></el-table-column>
         <el-table-column prop="cover" label="SKU封面" align="center">
           <template slot-scope="scope">
@@ -63,11 +89,12 @@
         <el-table-column prop="quality" label="库存" align="center"></el-table-column>
         <el-table-column prop="quality" label="采购量(件)" align="center">
           <template slot-scope="scope">
-            <el-input              
+            <el-input
               type="number"
-              :value='scope.row.quality'
+              :value="scope.row.quality"
               :max="scope.row.quality"
               :min="0"
+              ref="qty"
               :placeholder="scope.row.quality"
               @change="getval"
               @blur="change(scope.$index, scope.row)"
@@ -97,7 +124,7 @@
             class="item"
             style="margin-right:20px"
           >
-            <el-button type="primary" size="small" @click="handleChooseData">批量采购</el-button>
+            <el-button type="primary" size="small" @click="save">批量采购</el-button>
           </el-badge>
           <el-button type="primary" size="small" @click="allPurchase">一键采购</el-button>
         </div>
@@ -120,14 +147,15 @@ export default {
       getRowKeys(row) {
         return row.id;
       },
-      url:'',
-      pic: false,//支付页面是否显示
-      total:'',//总金额
-      trade_no:'',//订单编号
-      val:'',//采购量
+      url: "",
+      pic: false, //支付页面是否显示
+      car: false, //购物车
+      total: "", //总金额
+      trade_no: "", //订单编号
+      val: "", //采购量
       isshow: true,
       istrue: true,
-      tempArr:[],
+      tempArr: [],
       multipleSelectionAll: [], // 所有选中的数据包含跨页数据
       multipleSelection: [], // 当前页选中的数据
       idKey: "id", // 标识列表数据中每一行的唯一键的名称
@@ -172,52 +200,58 @@ export default {
   },
   mounted() {},
   methods: {
+    back() {
+      this.car = false; //yincang购物车
+      this.multipleSelectionAll = [];
+      this.multipleSelection = [];
+      this.tempArr = [];
+      this.getData();
+    },
     handleChooseData() {
       // 获取之前需要执行一遍记忆分页处理
       this.changePageCoreRecordData();
       this.setSelectRow();
       if (this.tableData != "") {
-        if (this.ids != "") {
-          this.$confirm(
-            `您要采购的商品数量为:${this.multipleSelectionAll.length}`,
-            "提示",
-            {
-              confirmButtonText: "确定",
-              cancelButtonText: "取消",
-              type: "warning",
-              center: true
-            }
-          )
-            .then(() => {
-              this.$axios({
-                method: "post",
-                url: "api/admin/purchase_Off",
-                data: {
-                  sku_goods: this.tempArr
-                }
-              }).then(res => {
-                console.log(res)
-                if(res.data.status==1){
-                  this.url='data:image/png;base64,'+res.data.data.qrcode;
-                  this.trade_no=res.data.data.trade_no;
-                  this.total=res.data.data.total;
-                  this.pic=true;//显示二维码
-                  this.istrue = true;//清空购物车消息
-                }               
-              });
-            })
-            .catch(() => {
-              this.$message({
-                type: "info",
-                message: "已取消批量采购"
-              });
-            });
-        } else {
-          this.$message({
+        this.$confirm(
+          `您要采购的商品数量为:${this.multipleSelectionAll.length}`,
+          "提示",
+          {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
             type: "warning",
-            message: "请选择商品"
+            center: true
+          }
+        )
+          .then(() => {
+            this.$axios({
+              method: "post",
+              url: "api/admin/purchase_Off",
+              data: {
+                sku_goods: this.tempArr
+              }
+            }).then(res => {
+              // console.log(res);
+              if (res.data.status == 1) {
+                this.url = "data:image/png;base64," + res.data.data.qrcode;
+                this.trade_no = res.data.data.trade_no;
+                this.total = res.data.data.total;
+                this.pic = true; //显示二维码
+                this.istrue = true; //清空购物车消息
+                this.car = false; //yincang购物车
+                this.multipleSelectionAll = [];
+                this.multipleSelection = [];
+                this.tempArr = [];
+                this.val=this.tableData.quality
+                this.getData();
+              }
+            });
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消批量采购"
+            });
           });
-        }
       } else {
         this.$message({
           type: "warning",
@@ -309,13 +343,42 @@ export default {
       this.changePageCoreRecordData();
       this.pagination.pageSize = val;
     },
+    save() {
+      this.changePageCoreRecordData();
+      this.setSelectRow();
+      // console.log(this.multipleSelectionAll);
+      //将需要的采购数据push到数组而且对象数组去重
+      if (this.multipleSelection != "") {
+        for (let i = 0; i < this.multipleSelection.length; i++) {
+          var newobj = {
+            id: this.multipleSelection[i].id,
+            qty: this.multipleSelection[i].quality
+          };
+          this.tempArr.push(newobj);
+        }
+        //数组中对象去重 reduce 用法
+        let obj = {};
+        this.tempArr = this.tempArr.reduce((cur, next) => {
+          obj[next.id] ? "" : (obj[next.id] = true && cur.push(next));
+          return cur;
+        }, []); //设置cur默认类型为数组，并且初始值为空的数组
+        // console.log(newobj);
+        // console.log(this.tempArr);
+        this.car = true;
+      } else {
+        this.$message({
+          type: "warning",
+          message: "暂无商品"
+        });
+      }
+    },
+    //选中
     handleSelectionChange(val) {
       // table组件选中事件,记得加上@selection-change="handleSelectionChange"
-      this.multipleSelection = val;
+      this.multipleSelection = val ? val : [];
       if (this.multipleSelection.length != 0) {
         this.istrue = false;
       }
-      this.ids = this.multipleSelection.map(item => item.id);
     },
     queryData(data) {
       // console.log(data)
@@ -374,21 +437,32 @@ export default {
       // console.log(this.$refs.childMethod); //返回的是一个vue对象，所以可以直接调用其方法
       this.$refs.childMethod.onSubmit(); //调用子组件的方法
     },
-    getval(val){
-      this.val=val
+    getval(val) {
+      // console.log(scope,e)
+      this.val = val;
     },
     change(index, row) {
-      let goods={
-        id:row.id,
-        qty:this.val
+      let goods = {
+        id: row.id,
+        qty: parseInt(this.val)
       };
-      if(row.qty>row.quality){
+      //替换
+      // for (let i = 0; i < this.multipleSelection.length; i++) {
+      //   if (this.multipleSelection[i].id == goods.id) {
+      //     var newobj = {
+      //       id: this.multipleSelection[i].id,
+      //       qty: parseInt(this.val)
+      //     };
+      //   }        
+      //   this.tempArr.push(newobj);
+      // }
+      if (row.qty > row.quality) {
         this.$message({
           type: "warning",
           message: "库存不够,请重新输入"
         });
       }
-      this.tempArr.push(goods)
+      this.tempArr.push(goods);
     }
   }
 };
@@ -398,14 +472,17 @@ export default {
 .box-card {
   padding-bottom: 20px;
 }
-.btn{
-  width:200px;
-  height:30px;
-  background:#1aad19;
-  text-align:center;
-  font-weight:bold;
-  color:#fff;
-  font-size:20px;
-  padding:10px 0
+.btn {
+  width: 200px;
+  height: 30px;
+  background: #1aad19;
+  text-align: center;
+  font-weight: bold;
+  color: #fff;
+  font-size: 20px;
+  padding: 10px 0;
+}
+li {
+  list-style-type: none;
 }
 </style>

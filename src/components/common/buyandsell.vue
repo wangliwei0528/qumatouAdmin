@@ -41,7 +41,7 @@
                             <div class='img'>
                               <img :src="item.cover" alt="">
                             </div>
-                            <span class='title'>                            
+                            <span class='title' style='width:100%;height:auto;margin:0 auto'>                            
                               <el-checkbox-group v-model="form.check" @change="onCheckChange">
                                 <el-checkbox :label="item.id" :value='item.id'>{{item.title}}</el-checkbox>                                
                               </el-checkbox-group>
@@ -273,7 +273,7 @@ export default {
 }
 .card {
   display: inline-block;
-  padding: 0 20px 50px;
+  padding: 0 98px 50px;
   width: 130px;
   height: 130px;
   margin-right: 30px;

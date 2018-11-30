@@ -11,14 +11,14 @@
       </div>
 			<el-form ref="form" :model="form" :rules="rules"  class='form'>
 				<el-form-item label="" prop="mobile">
-					<el-input v-model.trim="form.mobile" clearable placeholder="请输入手机号码" :maxlength="11" ></el-input>
-				</el-form-item>
+					<el-input v-model.trim="form.mobile" clearable placeholder="请输入手机号码" :maxlength="11"></el-input>
+        </el-form-item>
         <el-form-item label="" prop="pwd" v-show='password'>
-					<el-input v-model.trim="form.pwd" clearable placeholder="请输入密码"  type='password' @keyup.enter.native='login()'></el-input>
-				</el-form-item>
+					<el-input v-model.trim="form.pwd" clearable placeholder="请输入密码"  type='password' @keyup.enter.native='login()'></el-input>            
+        </el-form-item>
 				<el-form-item label="" prop="code" v-show='duanxin'>
 					<el-input type="text" v-model.trim="form.sms" clearable placeholder="请输入手机验证码" :maxlength="20" style='width:250px' @keyup.enter.native='login()'></el-input>
-				  <el-button type="primary" style='float:right' @click="getCode">
+				  <el-button type="primary" style='float:right;' @click="getCode">
             <span v-show="show" >获取验证码</span>
             <span v-show="!show" class="count">{{count}} s后重新发送</span>
           </el-button>

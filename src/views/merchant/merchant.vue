@@ -35,7 +35,7 @@
                         </el-option>
                     </el-select> 
                 </el-form-item>
-                <el-form-item label="分类:" prop='shop_type'>
+                <el-form-item label="选择分类:" prop='shop_type'>
                      <el-select v-model="form.shop_type" placeholder="请选择" filterable >
                         <el-option
                         v-for="item in form.shop_types"

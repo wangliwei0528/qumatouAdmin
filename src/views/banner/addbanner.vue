@@ -27,7 +27,7 @@
             :on-preview="handlePictureCardPreview"
             :before-upload="beforeAvatarUpload"
             :on-remove="handleRemove"
-            :on-success="uploadSuccess"       
+            :on-success="uploadSuccess"
             :file-list="imgList"
           >
             <i class="el-icon-plus"></i>
@@ -98,7 +98,7 @@ export default {
         Authorization: "Bearer " + localStorage.getItem("token")
       };
     },
-    //上传限制
+    //上传限制    
     beforeAvatarUpload(file) {
       // this.imgurl = ""; //编辑时替换图片
       const isJPG = file.type === "image/jpeg";
@@ -120,7 +120,7 @@ export default {
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
-    },    
+    },
     //单图上传成功
     uploadSuccess(res, file) {
       this.form.cover = res;
@@ -167,7 +167,7 @@ export default {
       }).then(res => {
         this.form = res.data.carousel;
         this.form.price = res.data.carousel.price / 100;
-        this.imgList.push({ url: res.data.carousel.cover});
+        this.imgList.push({ url: res.data.carousel.cover });
       });
     }
   }
