@@ -107,6 +107,7 @@ export default {
           },          
         })
         .then(res => {
+          console.log(res)
           this.tableData = res.data.data;
           if (res.data.total < res.data.per_page) {
             this.pagination = false;

@@ -31,7 +31,7 @@
                   <br>
                   <span style="color:red">单价:¥{{item.price}}</span>
                   <!-- <span v-if='item.qty!=""'>数量:{{item.qty}}</span>
-                  <span>数量:{{item.quality}}</span> -->
+                  <span>数量:{{item.quality}}</span>-->
                 </div>
               </div>
             </div>
@@ -230,7 +230,6 @@ export default {
                 sku_goods: this.tempArr
               }
             }).then(res => {
-              // console.log(res);
               if (res.data.status == 1) {
                 this.url = "data:image/png;base64," + res.data.data.qrcode;
                 this.trade_no = res.data.data.trade_no;
@@ -241,8 +240,10 @@ export default {
                 this.multipleSelectionAll = [];
                 this.multipleSelection = [];
                 this.tempArr = [];
-                this.val=this.tableData.quality
                 this.getData();
+                setTimeout(() => {
+                  this.payed();
+                }, 5000);
               }
             });
           })
@@ -258,6 +259,25 @@ export default {
           message: "暂无商品"
         });
       }
+    },
+    //支付完成
+    payed() {
+      this.$axios
+        .get("api/admin/query_Order", {
+          params: {
+            trade_no: this.trade_no
+          }
+        })
+        .then(res => {
+          if (res.data.status == 1) {
+            this.pic = false;
+          } else {
+            this.$message({
+              type: "warning",
+              message: "请重新扫码支付"
+            });
+          }
+        });
     },
     // 设置选中的方法
     setSelectRow() {
@@ -362,8 +382,6 @@ export default {
           obj[next.id] ? "" : (obj[next.id] = true && cur.push(next));
           return cur;
         }, []); //设置cur默认类型为数组，并且初始值为空的数组
-        // console.log(newobj);
-        // console.log(this.tempArr);
         this.car = true;
       } else {
         this.$message({
@@ -438,7 +456,6 @@ export default {
       this.$refs.childMethod.onSubmit(); //调用子组件的方法
     },
     getval(val) {
-      // console.log(scope,e)
       this.val = val;
     },
     change(index, row) {
@@ -446,21 +463,12 @@ export default {
         id: row.id,
         qty: parseInt(this.val)
       };
-      //替换
-      // for (let i = 0; i < this.multipleSelection.length; i++) {
-      //   if (this.multipleSelection[i].id == goods.id) {
-      //     var newobj = {
-      //       id: this.multipleSelection[i].id,
-      //       qty: parseInt(this.val)
-      //     };
-      //   }        
-      //   this.tempArr.push(newobj);
-      // }
-      if (row.qty > row.quality) {
+      if (this.val > row.quality) {
         this.$message({
           type: "warning",
           message: "库存不够,请重新输入"
         });
+        return false;
       }
       this.tempArr.push(goods);
     }
