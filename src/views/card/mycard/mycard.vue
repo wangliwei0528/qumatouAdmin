@@ -115,16 +115,15 @@
             <el-button 
             size="small"
             type='text'
-            @click.native.prevent="editRow(scope.$index, scope.row)"
-            >
+            @click.native.prevent="editRow(scope.$index, scope.row)">
               编辑
             </el-button>
             </span>            
             <el-button 
             size="small"
             type='text'
-            @click.native.prevent="deleteRow(scope.$index, scope.row)"
-            >
+            :disabled="scope.row.status==0"
+            @click.native.prevent="deleteRow(scope.$index, scope.row)">
               <span>{{scope.row.status==0?'已下架':'下架'}}</span>
             </el-button>        
           </template>

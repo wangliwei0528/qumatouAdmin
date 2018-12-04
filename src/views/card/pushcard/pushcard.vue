@@ -1,74 +1,71 @@
 <template>
   <div>
-    <el-row class='top'>
-        <div class="breadcrumb">
-            <el-breadcrumb separator="/">
-                <el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item>
-                <el-breadcrumb-item>卡券投放</el-breadcrumb-item>
-            </el-breadcrumb>
-        </div>
+    <el-row class="top">
+      <div class="breadcrumb">
+        <el-breadcrumb separator="/">
+          <el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item>
+          <el-breadcrumb-item>卡券投放</el-breadcrumb-item>
+        </el-breadcrumb>
+      </div>
     </el-row>
-  <el-card>
-        <!-- 分类 -->
-        <div slot="header" class='header'>
-           <el-button-group>
-              <el-button type="primary" icon="el-icon-arrow-left" @click='other()'>他人店铺</el-button>
-              <el-button type="primary" @click='me()'>我的店铺<i class="el-icon-arrow-right el-icon--right"></i></el-button>
-            </el-button-group>
-        </div> 
-        <!-- 分类 -->        
-        <!-- 他人店铺 -->       
-        <div v-if='this.types==1'>
-          <div class='search'>
-            <div>
-                <el-select v-model="region_id" filterable placeholder="请选择" style='float:left'>
-                  <el-option
-                    v-for="item in region"
-                    :key="item.id"
-                    :label="item.title"
-                    :value="item.id">
-                  </el-option>         
-                </el-select> 
-                <div style='float:left'>   
-                  <el-button type="primary" @click='search()'>搜索</el-button>
-                </div>
-            </div> 
-            <div>
-              <el-button type="primary" @click='allpush()'>批量投放</el-button>
-            </div>                  
+    <el-card>
+      <!-- 分类 -->
+      <div slot="header" class="header">
+        <el-button-group>
+          <el-button type="primary" icon="el-icon-arrow-left" @click="other()">他人店铺</el-button>
+          <el-button type="primary" @click="me()">
+            我的店铺
+            <i class="el-icon-arrow-right el-icon--right"></i>
+          </el-button>
+        </el-button-group>
+      </div>
+      <!-- 分类 -->
+      <!-- 他人店铺 -->
+      <div v-if="this.types==1">
+        <div class="search">
+          <div>
+            <el-select
+              @change="selectGet"
+              v-model="region_id"
+              filterable
+              clearable
+              placeholder="请选择"
+              style="float:left"
+            >
+              <el-option v-for="item in region" :key="item.id" :label="item.title" :value="item.id"></el-option>
+            </el-select>
+            <div style="float:left">
+              <el-button type="primary" @click="search()">搜索</el-button>
+            </div>
           </div>
-            <el-table
-                ref="multipleTable"
-                :data="lounch_lists"
-                border
-                style="width: 100%"
-                @selection-change="handleSelectionChange">
-                <el-table-column
-                  type="selection"
-                  align='center'>
-                </el-table-column>
-                <el-table-column
-                  label="商户名称"
-                  prop='title'
-                  align='center'
-                  >
-                </el-table-column>
-            </el-table>     
-        </div>  
-        <!-- 他人店铺 -->
-        <!-- 我的店铺 -->
-        <div v-if='types==2'>
-          <el-tag>店铺名称</el-tag>
-          <el-tag type="info">{{title}}</el-tag>
-           <el-button type="primary" size="small" @click='push()'>投放</el-button>
-        </div> 
-        <!-- 我的店铺 --> 
-        <div v-if='tag==0'>
-          <Mycomponent v-show='isshow'></Mycomponent>    
-        </div>                                       
-    </el-card>  
-</div>
-    
+          <div>
+            <el-button type="primary" @click="allpush()">批量投放</el-button>
+          </div>
+        </div>
+        <el-table
+          ref="multipleTable"
+          :data="lounch_lists"
+          border
+          style="width: 100%"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column type="selection" align="center"></el-table-column>
+          <el-table-column label="商户名称" prop="title" align="center"></el-table-column>
+        </el-table>
+      </div>
+      <!-- 他人店铺 -->
+      <!-- 我的店铺 -->
+      <div v-if="types==2">
+        <el-tag>店铺名称</el-tag>
+        <el-tag type="info">{{title}}</el-tag>
+        <el-button type="primary" size="small" @click="push()">投放</el-button>
+      </div>
+      <!-- 我的店铺 -->
+      <div v-if="tag==0">
+        <Mycomponent v-show="isshow"></Mycomponent>
+      </div>
+    </el-card>
+  </div>
 </template>
 <script>
 import Mycomponent from "@/components/common/alert";
@@ -76,26 +73,27 @@ export default {
   components: { Mycomponent },
   data() {
     return {
-      tag:'',
-      isshow:true,
+      tag: "",
+      isshow: true,
       region: [],
       lounch_lists: [],
       loading: true,
       region_id: "",
+      fid: "",
       types: 1,
       merchant: "",
       ids: [],
       firstid: 1,
       title: "",
-      allSelect:true,//默认全选
+      allSelect: true //默认全选
     };
   },
   created() {
-    this.tag=localStorage.getItem("tag")
+    this.tag = localStorage.getItem("tag");
     this.token = localStorage.getItem("token");
-    this.getData();   
+    this.getData();
   },
-  mounted(){},
+  mounted() {},
   methods: {
     //搜索
     search() {
@@ -120,20 +118,38 @@ export default {
     },
     //单个投放
     push() {
-      this.$router.push({ name: "createPush", params: { id: this.id,types: 2 } });
+      this.$router.push({
+        name: "createPush",
+        params: { id: this.id, types: 2 }
+      });
+    },
+    //获取select ID值
+    selectGet(vId) {
+      let obj = {};
+      obj = this.region.find(item => {
+        return item.id === vId; //筛选出匹配数据
+      });
+      this.fid = obj.id;
     },
     //获取数据
     getData() {
+      if (this.fid) {
+        var params = {
+          types: this.types,
+          region_id: this.fid
+        };
+      } else {
+        var params = {
+          types: this.types
+        };
+      }
       this.$axios
         .get("api/admin/launch_lists", {
-          params: {
-            types: this.types,
-            region_id: this.region_id
-          },          
+          params: params
         })
-        .then(res => {          
+        .then(res => {
           this.region = res.data.region;
-          this.region_id = res.data.region_id;
+          this.region_id =res.data.region_id;          
           this.lounch_lists = res.data.lounch_lists;
           //默认全选
           let rows = res.data.lounch_lists;
@@ -141,7 +157,10 @@ export default {
           this.$nextTick(function() {
             if (rows) {
               rows.forEach(row => {
-                this.$refs.multipleTable.toggleRowSelection(row,this.allSelect);
+                this.$refs.multipleTable.toggleRowSelection(
+                  row,
+                  this.allSelect
+                );
               });
             }
           });
@@ -157,7 +176,7 @@ export default {
     },
     //复选框切换
     handleSelectionChange(val) {
-      let ids = val.map(item => item.id).join();//字符串
+      let ids = val.map(item => item.id).join(); //字符串
       this.ids = ids;
     }
   }

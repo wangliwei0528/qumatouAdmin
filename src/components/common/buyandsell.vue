@@ -3,72 +3,82 @@
     <el-dialog
       title="选择商户"
       :visible.sync="centerDialogVisible"
-      :close-on-click-modal=false
-      :show-close=true
+      :close-on-click-modal="false"
+      :show-close="true"
       width="70%"
-      center>
+      center
+    >
       <!-- 三级联动 -->
-          <div  style='width:90%;margin:0 auto;'>            
-              <el-form ref="form" :model="form" label-width="100px">
-                  <!-- <el-form-item label="选择地区" prop='city'>
+      <div style="width:90%;margin:0 auto;">
+        <el-form ref="form" :model="form" label-width="100px">
+          <!-- <el-form-item label="选择地区" prop='city'>
                       <City ref="headerChild" @choseBlock='choseBlock'/>
-                  </el-form-item>  -->
-                    <!-- 选择开始 -->
-                  <div style='border-bottom:1px solid #dcdfe6;padding-bottom:30px;margin-bottom:30px'>           
-                    <el-cascader
-                      v-model="form.region_id"
-                      placeholder="请选择地区"
-                      :options="region"
-                      filterable
-                      change-on-select
-                      @change="handleItemChange">
-                    </el-cascader> 
-                    <el-cascader
-                      v-model="form.industry_id"
-                      placeholder="请选择行业"
-                      :options="industry"
-                      filterable
-                      change-on-select
-                      @change="handleItemChanges">
-                    </el-cascader>                        
-                    <el-input v-model="form.title" placeholder="请输入商户名称" style='width:194px;display:inline-block'></el-input>        
-                    <el-button type="primary" style='padding: 11px 20px;margin-left:100px' @click='search'>搜索</el-button>  
-                  </div>
-                  <!-- 选择结束 -->              
-                  <!-- 商户开始 -->
-                  <div class='shanghu'>
-                      <el-card class='card' v-if="item.cover!=''"  v-for='(item,index) in list' :key='index'>
-                            <div class='img'>
-                              <img :src="item.cover" alt="">
-                            </div>
-                            <span class='title' style='width:100%;height:auto;margin:0 auto'>                            
-                              <el-checkbox-group v-model="form.check" @change="onCheckChange">
-                                <el-checkbox :label="item.id" :value='item.id'>{{item.title}}</el-checkbox>                                
-                              </el-checkbox-group>
-                            </span>
-                      </el-card>                      
-                  </div> 
-                  <!-- 商户结束 -->
-                  <!-- 分页开始 -->
-                  <div class="block" v-show='list.length>10'>
-                    <el-pagination
-                          @current-change="handleCurrentChanges"
-                          :current-page="currentPage"
-                          :page-sizes="[per_page]"
-                          :page-size="per_page"
-                          layout="total, sizes, prev, pager, next, jumper"
-                          :total="total"
-                          :background="true">
-                      </el-pagination>
-                  </div>
-                  <!-- 分页结束 -->
-              </el-form>
+          </el-form-item>-->
+          <!-- 选择开始 -->
+          <div style="border-bottom:1px solid #dcdfe6;padding-bottom:30px;margin-bottom:30px">
+            <el-cascader
+              v-model="form.region_id"
+              placeholder="请选择地区"
+              :options="region"
+              filterable
+              change-on-select
+              @change="handleItemChange"
+            ></el-cascader>
+            <el-cascader
+              v-model="form.industry_id"
+              placeholder="请选择行业"
+              :options="industry"
+              :props="props"
+              filterable
+              change-on-select
+              @change="handleItemChanges"
+            ></el-cascader>
+            <el-input
+              v-model="form.title"
+              placeholder="请输入商户名称"
+              style="width:194px;display:inline-block"
+            ></el-input>
+            <el-button
+              type="primary"
+              style="padding: 11px 20px;margin-left:100px"
+              @click="search"
+            >搜索</el-button>
           </div>
-          <span slot="footer" class="dialog-footer">
-            <!-- <el-button @click="resetForm('form')">取 消</el-button> -->
-            <el-button type="primary" @click="onSubmit()">确 定</el-button>
-          </span>
-    </el-dialog>    
+          <!-- 选择结束 -->
+          <!-- 商户开始 -->
+          <div class="shanghu">
+            <el-card class="card" v-if="item.cover!=''" v-for="(item,index) in list" :key="index">
+              <div class="img">
+                <img :src="item.cover" alt>
+              </div>
+              <span class="title" style="width:100%;height:auto;margin:0 auto">
+                <el-checkbox-group v-model="form.check" @change="onCheckChange">
+                  <el-checkbox :label="item.id" :value="item.id">{{item.title}}</el-checkbox>
+                </el-checkbox-group>
+              </span>
+            </el-card>
+          </div>
+          <!-- 商户结束 -->
+          <!-- 分页开始 -->
+          <div class="block" v-show="list.length>10">
+            <el-pagination
+              @current-change="handleCurrentChanges"
+              :current-page="currentPage"
+              :page-sizes="[per_page]"
+              :page-size="per_page"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="total"
+              :background="true"
+            ></el-pagination>
+          </div>
+          <!-- 分页结束 -->
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <!-- <el-button @click="resetForm('form')">取 消</el-button> -->
+        <el-button type="primary" @click="onSubmit()">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -91,6 +101,12 @@ export default {
         title: "", //商户名称
         check: []
       },
+      props: {
+        value: "id",
+        label: "title",
+        children: "child",
+        disabled: "child"
+      }, //转换行业数据格式
       total: 0, //总数默认为0
       currentPage: 1, //当前页默认为1
       pagesize: 10, //每页显示的数据
@@ -119,49 +135,52 @@ export default {
     //行业数据转换
     getList() {
       this.$axios.get("api/admin/industry").then(res => {
-        if (res.status == 200) {
-          this.enumArr = [];
-          this.getEnumsList(res.data.industry);
-          res.data.industry.forEach(item => {
-            this.keep(item);
-            this.industry.push({
-              value: item.id,
-              label: item.title,
-              children: item.child
-            });
-          });
-        } else {
-          this.$message.error("获取列表失败");
-        }
+        console.log(res);
+        this.industry = res.data.industry;
+        console.log(this.industry);
+        // if (res.status == 200) {
+        //   this.enumArr = [];
+        //   this.getEnumsList(res.data.industry);
+        //   res.data.industry.forEach(item => {
+        //     this.keep(item);
+        //     this.industry.push({
+        //       value: item.id,
+        //       label: item.title,
+        //       children: item.child
+        //     });
+        //   });
+        // } else {
+        //   this.$message.error("获取列表失败");
+        // }
       });
     },
     //获取枚举值列表（递归）获取所有的数据(子父级所有的数据)
-    getEnumsList(val) {
-      if (val && val.length != 0) {
-        val.forEach(item => {
-          this.enumArr.push(item);
-          this.enumArr.shift();
-          this.getEnumsList(item.child);
-        });
-      }
-    },
+    // getEnumsList(val) {
+    //   if (val && val.length != 0) {
+    //     val.forEach(item => {
+    //       this.enumArr.push(item);
+    //       this.enumArr.shift();
+    //       this.getEnumsList(item.child);
+    //     });
+    //   }
+    // },
     //循环子级
-    keep(val) {
-      val.children = [];
-      if (val.child && val.child.length != 0) {
-        val.child.forEach(item => {
-          val.child.push({
-            value: item.id,
-            label: item.title,
-            children: item.child
-          });
-          val.child.shift();
-          this.keep(item);
-        });
-      } else {
-        delete val.child;
-      }
-    },
+    // keep(val) {
+    //   val.children = [];
+    //   if (val.child && val.child.length != 0) {
+    //     val.child.forEach(item => {
+    //       val.child.push({
+    //         value: item.id,
+    //         label: item.title,
+    //         children: item.child
+    //       });
+    //       val.child.shift();
+    //       this.keep(item);
+    //     });
+    //   } else {
+    //     delete val.child;
+    //   }
+    // },
     //地区选值
     handleItemChange(val, opt) {
       this.form.region_id = val;
@@ -210,19 +229,19 @@ export default {
     onSubmit() {
       //如果没有选择商户提醒选择商户
       if (this.form.check != "") {
-        if(this.title){
-          var data={
+        if (this.title) {
+          var data = {
             wholes_id: this.form.check,
             page: this.currentPage ? this.currentPage : this.page,
             title: this.title,
-            purchase_id: this.form.check,
-          }
-        }else{
-          var data={
+            purchase_id: this.form.check
+          };
+        } else {
+          var data = {
             wholes_id: this.form.check,
             page: this.currentPage ? this.currentPage : this.page,
-            purchase_id: this.form.check,
-          }
+            purchase_id: this.form.check
+          };
         }
         this.$axios({
           method: "post",
@@ -231,7 +250,7 @@ export default {
         })
           .then(res => {
             if (res.data.status == 1) {
-              //过滤已经代购的            
+              //过滤已经代购的
               for (var i = 0; i < this.multipleSelectionAll.length; i++) {
                 for (var j = 0; j < res.data.goos_List.data.length; j++) {
                   if (

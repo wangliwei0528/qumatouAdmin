@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="微信扫码支付" :visible.sync="pic" width="30%" center>
+    <el-dialog title="微信扫码支付" :visible.sync="pic" width="30%" center @close="closeDialog">
       <div style="width:220px;margin-left:50%;transform:translateX(-50%)">
         <div style="font-weight:bold">
           <span>订单编号:</span>
@@ -126,7 +126,7 @@
           >
             <el-button type="primary" size="small" @click="save">批量采购</el-button>
           </el-badge>
-          <el-button type="primary" size="small" @click="allPurchase">一键采购</el-button>
+          <!-- <el-button type="primary" size="small" @click="allPurchase">一键采购</el-button> -->
         </div>
       </div>
     </el-card>
@@ -137,6 +137,7 @@
     <!--是否完善信息  -->
   </div>
 </template>
+
 <script>
 import Buy from "@/components/common/purchase";
 import Mycomponent from "@/components/common/alert";
@@ -177,7 +178,8 @@ export default {
       },
       rules: {
         price: [{ required: true, message: "请输入商品价格", trigger: "blur" }]
-      }
+      },
+      timeName: null
     };
   },
   created() {
@@ -200,6 +202,11 @@ export default {
   },
   mounted() {},
   methods: {
+    //关闭弹窗清除定时器
+    closeDialog() {
+      clearInterval(this.timeName);
+    },
+    //取消
     back() {
       this.car = false; //yincang购物车
       this.multipleSelectionAll = [];
@@ -207,6 +214,7 @@ export default {
       this.tempArr = [];
       this.getData();
     },
+    //批量采购
     handleChooseData() {
       // 获取之前需要执行一遍记忆分页处理
       this.changePageCoreRecordData();
@@ -241,9 +249,7 @@ export default {
                 this.multipleSelection = [];
                 this.tempArr = [];
                 this.getData();
-                setTimeout(() => {
-                  this.payed();
-                }, 5000);
+                this.payed();
               }
             });
           })
@@ -260,24 +266,22 @@ export default {
         });
       }
     },
-    //支付完成
+    //是否支付完成
     payed() {
-      this.$axios
-        .get("api/admin/query_Order", {
-          params: {
-            trade_no: this.trade_no
-          }
-        })
-        .then(res => {
-          if (res.data.status == 1) {
-            this.pic = false;
-          } else {
-            this.$message({
-              type: "warning",
-              message: "请重新扫码支付"
-            });
-          }
-        });
+      this.timeName = setInterval(() => {
+        this.$axios
+          .get("api/admin/query_Order", {
+            params: {
+              trade_no: this.trade_no
+            }
+          })
+          .then(res => {
+            if (res.data.status == 1) {
+              this.pic = false;
+              clearInterval(this.timeName);
+            }
+          });
+      }, 5000);
     },
     // 设置选中的方法
     setSelectRow() {
@@ -343,6 +347,7 @@ export default {
         }
       });
     },
+    //切换页码
     currentChange(val) {
       // 改变页的时候调用一次
       this.changePageCoreRecordData();
@@ -358,11 +363,13 @@ export default {
         this.tableData = res.data.goos_List.data;
       });
     },
+    //每页数量改变
     sizeChange(val) {
       // 改变每页显示条数的时候调用一次
       this.changePageCoreRecordData();
       this.pagination.pageSize = val;
     },
+    //将商品放入采购数组
     save() {
       this.changePageCoreRecordData();
       this.setSelectRow();
@@ -398,6 +405,7 @@ export default {
         this.istrue = false;
       }
     },
+    //渲染数据data
     queryData(data) {
       // console.log(data)
       this.tableData = data.data.goos_List.data.map(item => {
@@ -407,7 +415,8 @@ export default {
       this.wholes_id = data.data.wholes_id;
       this.pagination.totalRows = data.data.goos_List.total;
       this.pagination.per_page = data.data.goos_List.per_page;
-    }, // 得到选中的所有数据
+    }, 
+    // 得到选中的所有数据
     getAllSelectionData() {
       // 再执行一次记忆勾选数据匹配，目的是为了在当前页操作勾选后直接获取选中数据
       this.changePageCoreRecordData();
@@ -455,9 +464,11 @@ export default {
       // console.log(this.$refs.childMethod); //返回的是一个vue对象，所以可以直接调用其方法
       this.$refs.childMethod.onSubmit(); //调用子组件的方法
     },
+    //input框值改变
     getval(val) {
       this.val = val;
     },
+    //确定input的值并作为参数放入数组
     change(index, row) {
       let goods = {
         id: row.id,
@@ -472,6 +483,11 @@ export default {
       }
       this.tempArr.push(goods);
     }
+  },
+  //页面销毁
+  beforeDestroy() {
+    //            清楚定时器
+    clearInterval(this.timeName);
   }
 };
 </script>

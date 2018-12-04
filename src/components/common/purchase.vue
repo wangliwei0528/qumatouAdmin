@@ -27,6 +27,7 @@
                       v-model="form.industry_id"
                       placeholder="请选择行业"
                       :options="industry"
+                      :props="props"
                       filterable
                       change-on-select
                       @change="handleItemChanges">
@@ -91,6 +92,11 @@ export default {
         title: "", //商户名称
         check: []
       },
+      props: {
+          value: 'id',
+          label: 'title',
+          children: 'child'
+        },//转换行业数据格式
       total: 0, //总数默认为0
       currentPage: 1, //当前页默认为1
       pagesize: 10, //每页显示的数据
@@ -119,49 +125,50 @@ export default {
     //行业数据转换
     getList() {
       this.$axios.get("api/admin/industry").then(res => {
-        if (res.status == 200) {
-          this.enumArr = [];
-          this.getEnumsList(res.data.industry);
-          res.data.industry.forEach(item => {
-            this.keep(item);
-            this.industry.push({
-              value: item.id,
-              label: item.title,
-              children: item.child
-            });
-          });
-        } else {
-          this.$message.error("获取列表失败");
-        }
+        this.industry=res.data.industry
+        // if (res.status == 200) {
+        //   this.enumArr = [];
+        //   this.getEnumsList(res.data.industry);
+        //   res.data.industry.forEach(item => {
+        //     this.keep(item);
+        //     this.industry.push({
+        //       value: item.id,
+        //       label: item.title,
+        //       children: item.child
+        //     });
+        //   });
+        // } else {
+        //   this.$message.error("获取列表失败");
+        // }
       });
     },
     //获取枚举值列表（递归）获取所有的数据(子父级所有的数据)
-    getEnumsList(val) {
-      if (val && val.length != 0) {
-        val.forEach(item => {
-          this.enumArr.push(item);
-          this.enumArr.shift();
-          this.getEnumsList(item.child);
-        });
-      }
-    },
+    // getEnumsList(val) {
+    //   if (val && val.length != 0) {
+    //     val.forEach(item => {
+    //       this.enumArr.push(item);
+    //       this.enumArr.shift();
+    //       this.getEnumsList(item.child);
+    //     });
+    //   }
+    // },
     //循环子级
-    keep(val) {
-      val.children = [];
-      if (val.child && val.child.length != 0) {
-        val.child.forEach(item => {
-          val.child.push({
-            value: item.id,
-            label: item.title,
-            children: item.child
-          });
-          val.child.shift();
-          this.keep(item);
-        });
-      } else {
-        delete val.child;
-      }
-    },
+    // keep(val) {
+    //   val.children = [];
+    //   if (val.child && val.child.length != 0) {
+    //     val.child.forEach(item => {
+    //       val.child.push({
+    //         value: item.id,
+    //         label: item.title,
+    //         children: item.child
+    //       });
+    //       val.child.shift();
+    //       this.keep(item);
+    //     });
+    //   } else {
+    //     delete val.child;
+    //   }
+    // },
     //地区选值
     handleItemChange(val, opt) {
       this.form.region_id = val;

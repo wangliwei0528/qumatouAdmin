@@ -16,7 +16,7 @@ NProgress.inc(0.5)
 NProgress.configure({
   easing: 'ease',
   speed: 1000,
-  showSpinner: false
+  showSpinner: true
 })
 
 Vue.config.productionTip = false
@@ -42,12 +42,13 @@ let date = localStorage.getItem('date')
 let currDate = parseInt(new Date().getTime() / 1000)
 Axios.interceptors.request.use(
   config => {
-    loadinginstace = Loading.service({
-      fullscreen: true,
-      text: '拼命加载中...',
-      spinner: "el-icon-loading",
-      background: "rgba(0, 0, 0, 0.7)"
-    })
+    NProgress.start()
+    // loadinginstace = Loading.service({
+    //   fullscreen: true,
+    //   text: '拼命加载中...',
+    //   spinner: "el-icon-loading",
+    //   background: "rgba(0, 0, 0, 0.7)"
+    // })
     if (window.localStorage.getItem('token')) { // 每次发送请求之前判断是否存在token，如果存在，则统一在http请求的header都加上token，不用每次请求都手动添加了
       config.headers.common['Authorization'] = `Bearer ` + localStorage.getItem('token');
       config.headers.common['Accept'] = 'application/vnd.lingmo.v1+json'
@@ -69,7 +70,8 @@ Axios.interceptors.request.use(
 // http response 服务器响应拦截器，这里拦截401错误，并重新跳入登页重新获取token
 Axios.interceptors.response.use(
   response => {
-    loadinginstace.close()
+    NProgress.done();
+    // loadinginstace.close()
     if (date && currDate > date) {
       Message.warning({
         message: '登录信息过期，请重新登录'
@@ -97,7 +99,8 @@ Axios.interceptors.response.use(
     return response;
   },
   error => {
-    loadinginstace.close()
+    NProgress.done();
+    // loadinginstace.close()
     Message.error({
       message: '加载失败'
     })
