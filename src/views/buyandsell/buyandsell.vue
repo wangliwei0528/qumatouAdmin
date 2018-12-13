@@ -57,7 +57,7 @@
         </el-table-column>-->
       </el-table>
       <div style="margin:20px 0;">
-        <div style="float:right" v-if="tableData.length>10">
+        <div style="float:right" v-if="pagination.pagination">
           <el-pagination
             :page-size="pagination.pageSize"
             @current-change="currentChange"
@@ -108,6 +108,7 @@ export default {
       idKey: "id", // 标识列表数据中每一行的唯一键的名称
       tableData: [], // 表格数据
       pagination: {
+        pagination:false,
         totalRows: 0, //总条数
         pageSize: 10, //每页显示条数
         pageSizes: [10],
@@ -289,10 +290,16 @@ export default {
         return item;
       });
       this.wholes_id = data.data.wholes_id;
-      this.pagination.totalRows = data.data.goos_List.total;
-      this.pagination.per_page = data.data.goos_List.per_page;
-      
-      //以后要排除已经选择的
+      // console.log(this.wholes_id)
+      if (data.data.goos_List.total < data.data.goos_List.total) {
+          this.pagination.pagination = false;
+        } else {
+          this.pagination.pagination = true;
+        }
+        this.pagination.totalRows = data.data.goos_List.total;
+           
+      this.pagination.per_page = data.data.goos_List.total;
+    //以后要排除已经选择的
     }, // 得到选中的所有数据
     getAllSelectionData() {
       // 再执行一次记忆勾选数据匹配，目的是为了在当前页操作勾选后直接获取选中数据

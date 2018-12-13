@@ -237,6 +237,7 @@ export default {
           data: data
         })
           .then(res => {
+            console.log(res)
             if (res.data.status == 1) {              
               this.$emit("listenChild", res); //向父组件传值
               this.centerDialogVisible = false;

@@ -55,6 +55,8 @@ export default {
       qu1: [],
       city:'',
       block:'',
+      arr:[],
+      list:''
     }
   },
   methods:{
@@ -64,6 +66,7 @@ export default {
         axios.get(this.mapJson).then(function(response){
           if (response.status==200) {
             var data = response.data
+            // this.list = response.data            
             that.province = []
             that.city = []
             that.block = []
@@ -107,7 +110,7 @@ export default {
             this.shi = this.province[index2].children[0].value
             this.qu1 =this.province[index2].children[0].children
             this.qu = this.province[index2].children[0].children[0].value
-            this.E = this.qu1[0].id
+            // this.E = this.qu1[0].value
           }
         }
       },
@@ -117,16 +120,15 @@ export default {
           if (e === this.city[index3].id) {
             this.qu1 = this.city[index3].children
             this.qu = this.city[index3].children[0].value
-            this.E = this.qu1[0].id
-            console.log(this.E)
+            // this.E = this.qu1[0].id
+            // console.log(this.E)
           }
         }
       },
       // 选区
       choseBlock(e) {
+        // console.log(this.block)
         this.$emit("choseBlock",e);
-        // this.E=e;
-        // console.log(this.E)
       },
     },
     created:function(){

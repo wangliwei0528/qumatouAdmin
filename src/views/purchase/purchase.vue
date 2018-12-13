@@ -15,8 +15,75 @@
         </div>
       </div>
     </el-dialog>
-    <el-dialog title="采购列表" :visible.sync="car" width="30%" center>
+    <el-dialog title="新增收货地址" :visible.sync="address" width="30%" center>
+      <el-form
+        :model="ruleForm"
+        :rules="rules"
+        ref="ruleForm"
+        label-width="100px"
+        class="demo-ruleForm"
+      >
+        <el-form-item label="收货人姓名" prop="name">
+          <el-input v-model="ruleForm.name" placeholder="收货人姓名" style="width:300px"></el-input>
+        </el-form-item>
+        <el-form-item label="收货人性别" prop="sex">
+          <template>
+            <el-radio v-model="ruleForm.sex" label="1">男</el-radio>
+            <el-radio v-model="ruleForm.sex" label="2">女</el-radio>
+          </template>
+        </el-form-item>
+        <el-form-item label="收货人电话" prop="mobile">
+          <el-input v-model="ruleForm.mobile" placeholder="收货人姓名" style="width:300px"></el-input>
+        </el-form-item>
+        <el-form-item label="选择地区" prop="city">
+          <template>
+            <v-distpicker
+              :province="ruleForm.province"
+              :city="ruleForm.city"
+              :area="ruleForm.area"
+              @province="province"
+              @city="city"
+              @area="area"
+            ></v-distpicker>
+          </template>
+        </el-form-item>
+        <el-form-item label="详细地址" prop="address">
+          <el-input
+            v-model="ruleForm.address"
+            type="textarea"
+            :rows="2"
+            placeholder="请输入详细地址"
+            style="width:300px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="设为默认地址" prop="status">
+          <el-switch
+            v-model="ruleForm.status"
+            active-color="#66b1ff"
+            active-value="1"
+            inactive-value="0"
+            inactive-color="#ccc"
+          ></el-switch>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+          <el-button @click="resetForm('ruleForm')">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+    <el-dialog title="确认订单" :visible.sync="car" width="30%" center>
       <div style="padding:0 30px 60px">
+        <div style="padding-left:40px">
+          <el-select v-model="addressList.id" placeholder="请选择收获地址">
+            <el-option
+              v-for="item in addressList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+          <el-button type="primary" @click="addAddress">新增收货地址</el-button>
+        </div>
         <ul>
           <li v-for="(item,index) in multipleSelectionAll" :key="index">
             <div style="width:100%;height:100px">
@@ -104,7 +171,7 @@
         </el-table-column>
       </el-table>
       <div style="margin:20px 0;">
-        <div style="float:right" v-if="tableData.length>10">
+        <div style="float:right" v-if="pagination.pagination">
           <el-pagination
             :page-size="pagination.pageSize"
             @current-change="currentChange"
@@ -117,8 +184,7 @@
         </div>
         <div style="float:left">
           <el-badge
-            :value="multipleSelection.length"
-            :max="10"
+            :value="this.multipleSelectionAll.length?this.multipleSelectionAll.length:multipleSelection.length"
             :min="1"
             :hidden="istrue"
             class="item"
@@ -139,10 +205,11 @@
 </template>
 
 <script>
+import VDistpicker from "v-distpicker";
 import Buy from "@/components/common/purchase";
 import Mycomponent from "@/components/common/alert";
 export default {
-  components: { Buy, Mycomponent },
+  components: { Buy, Mycomponent, VDistpicker },
   data() {
     return {
       getRowKeys(row) {
@@ -151,6 +218,22 @@ export default {
       url: "",
       pic: false, //支付页面是否显示
       car: false, //购物车
+      address: false, //新增收货地址页面
+      addressList: [], //收获地址列表
+      select: { province: "", city: "", area: "" },
+      ruleForm: {
+        name: "", //收货人姓名
+        sex: "", //收货人性别 1男2女
+        mobile: "", //收货人联系方式
+        province: "", //省
+        city: "", //市
+        area: "", //区
+        address: "", //地址
+        status: "" //是否默认地址
+      },
+      rules: {
+        name: [{ required: true, message: "请输入收货人姓名" }]
+      },
       total: "", //总金额
       trade_no: "", //订单编号
       val: "", //采购量
@@ -162,6 +245,7 @@ export default {
       idKey: "id", // 标识列表数据中每一行的唯一键的名称
       tableData: [], // 表格数据
       pagination: {
+        pagination: false,
         totalRows: 0, //总条数
         pageSize: 10, //每页显示条数
         pageSizes: [10],
@@ -184,24 +268,51 @@ export default {
   },
   created() {
     this.tag = localStorage.getItem("tag"); //判断是否完善信息
-    // let a = [["白色", "黑色"], ["XL", "L"]].reduce(
-    //   function(a, b) {
-    //     return a
-    //       .map(function(x) {
-    //         return b.map(function(y) {
-    //           return x.concat(y);
-    //         });
-    //       })
-    //       .reduce(function(a, b) {
-    //         return a.concat(b);
-    //       }, []);
-    //   },
-    //   [[]]
-    // );
-    // console.log(a);
   },
   mounted() {},
   methods: {
+    //省
+    province(val) {
+      this.ruleForm.province = val.value;
+    },
+    //市
+    city(val) {
+      this.ruleForm.city = val.value;
+    },
+    //区
+    area(val) {
+      this.ruleForm.area = val.value;
+    },
+    //提交添加地址
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.$axios.post("api/admin/addAddress", this[formName]).then(res => {
+            console.log(res);
+            this.ruleForm = {};
+            this.address = false;
+          });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+    //取消
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    //获取默认收货地址
+    getAddress() {
+      this.$axios.get("api/admin/defaultAddress").then(res => {
+        console.log(res);
+        this.addressList = res.data.defaultAddress;
+      });
+    },
+    //新增收货地址
+    addAddress() {
+      this.address = true;
+    },
     //关闭弹窗清除定时器
     closeDialog() {
       clearInterval(this.timeName);
@@ -219,52 +330,45 @@ export default {
       // 获取之前需要执行一遍记忆分页处理
       this.changePageCoreRecordData();
       this.setSelectRow();
-      if (this.tableData != "") {
-        this.$confirm(
-          `您要采购的商品数量为:${this.multipleSelectionAll.length}`,
-          "提示",
-          {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning",
-            center: true
-          }
-        )
-          .then(() => {
-            this.$axios({
-              method: "post",
-              url: "api/admin/purchase_Off",
-              data: {
-                sku_goods: this.tempArr
-              }
-            }).then(res => {
-              if (res.data.status == 1) {
-                this.url = "data:image/png;base64," + res.data.data.qrcode;
-                this.trade_no = res.data.data.trade_no;
-                this.total = res.data.data.total;
-                this.pic = true; //显示二维码
-                this.istrue = true; //清空购物车消息
-                this.car = false; //yincang购物车
-                this.multipleSelectionAll = [];
-                this.multipleSelection = [];
-                this.tempArr = [];
-                this.getData();
-                this.payed();
-              }
-            });
-          })
-          .catch(() => {
-            this.$message({
-              type: "info",
-              message: "已取消批量采购"
-            });
-          });
-      } else {
-        this.$message({
+      this.$confirm(
+        `您要采购的商品数量为:${this.multipleSelectionAll.length}`,
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
           type: "warning",
-          message: "暂无商品"
+          center: true
+        }
+      )
+        .then(() => {
+          this.$axios({
+            method: "post",
+            url: "api/admin/purchase_Off",
+            data: {
+              sku_goods: this.tempArr
+            }
+          }).then(res => {
+            if (res.data.status == 1) {
+              this.url = "data:image/png;base64," + res.data.data.qrcode;
+              this.trade_no = res.data.data.trade_no;
+              this.total = res.data.data.total;
+              this.pic = true; //显示二维码
+              this.istrue = true; //清空购物车消息
+              this.car = false; //yincang购物车
+              // this.multipleSelectionAll = [];
+              // this.multipleSelection = [];
+              this.tempArr = [];
+              this.getData();
+              this.payed();
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消批量采购"
+          });
         });
-      }
     },
     //是否支付完成
     payed() {
@@ -296,7 +400,7 @@ export default {
         selectAllIds.push(row[idKey]);
         // console.log(this.multipleSelectionAll);
       });
-      this.$refs.table.clearSelection();
+      // this.$refs.table.clearSelection();
       for (var i = 0; i < this.tableData.length; i++) {
         if (selectAllIds.indexOf(this.tableData[i][idKey]) >= 0) {
           // 设置选中，记住table组件需要使用ref="table"
@@ -356,8 +460,9 @@ export default {
         method: "post",
         url: "api/admin/Goods_List",
         data: {
-          wholes_id: this.wholes_id,
-          page: val
+          purchase_id: this.purchase_id,
+          page: val,
+          type: 1
         }
       }).then(res => {
         this.tableData = res.data.goos_List.data;
@@ -389,6 +494,7 @@ export default {
           obj[next.id] ? "" : (obj[next.id] = true && cur.push(next));
           return cur;
         }, []); //设置cur默认类型为数组，并且初始值为空的数组
+        this.getAddress();
         this.car = true;
       } else {
         this.$message({
@@ -406,16 +512,21 @@ export default {
       }
     },
     //渲染数据data
-    queryData(data) {
-      // console.log(data)
+    queryData(data) {      
       this.tableData = data.data.goos_List.data.map(item => {
         item.price = item.price / 100;
         return item;
       });
-      this.wholes_id = data.data.wholes_id;
+      this.purchase_id = data.data.purchase_id;
+      if (data.data.goos_List.total < data.data.goos_List.total) {
+        this.pagination.pagination = false;
+      } else {
+        this.pagination.pagination = true;
+      }
       this.pagination.totalRows = data.data.goos_List.total;
-      this.pagination.per_page = data.data.goos_List.per_page;
-    }, 
+
+      this.pagination.per_page = data.data.goos_List.total;
+    },
     // 得到选中的所有数据
     getAllSelectionData() {
       // 再执行一次记忆勾选数据匹配，目的是为了在当前页操作勾选后直接获取选中数据
