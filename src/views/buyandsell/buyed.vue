@@ -1,13 +1,13 @@
 <template>
   <div>
-    <el-row class='top'>
-        <div class="breadcrumb">
-            <el-breadcrumb separator="/">
-                <el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item>
-                <el-breadcrumb-item :to="{ path: 'buyandsell' }">代购代销</el-breadcrumb-item>
-                <el-breadcrumb-item>已购商品</el-breadcrumb-item>
-            </el-breadcrumb>
-        </div>
+    <el-row class="top">
+      <div class="breadcrumb">
+        <el-breadcrumb separator="/">
+          <el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ path: 'buyandsell' }">代购代销</el-breadcrumb-item>
+          <el-breadcrumb-item>已购商品</el-breadcrumb-item>
+        </el-breadcrumb>
+      </div>
     </el-row>
     <el-card>
       <div slot="header" class="header">
@@ -19,7 +19,7 @@
         <el-table-column prop="subtitle" label="标题" align="center"></el-table-column>
         <el-table-column prop="cover" label="封面" align="center">
           <template slot-scope="scope">
-            <img :src="scope.row.cover" alt style='width:50px;height:50px'>
+            <img :src="scope.row.cover" alt style="width:50px;height:50px">
           </template>
         </el-table-column>
         <el-table-column prop="cate_name" label="分类" align="center"></el-table-column>
@@ -27,7 +27,18 @@
         <el-table-column prop="brand_name" label="单位" align="center"></el-table-column>
         <el-table-column prop="price" label="价格(元)" align="center">
           <template slot-scope="scope">
-              <span>{{(scope.row.price)/100}}</span>
+            <span>{{(scope.row.price)/100}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column fixed="right" label="操作" width="180" align="center">
+          <template slot-scope="scope">
+            <el-button
+              size="small"
+              type="text"
+              @click.native.prevent="deleteRow(scope.$index, scope.row)"
+            >
+              <span>{{'下架'}}</span>
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -82,7 +93,9 @@ export default {
         })
         .then(res => {
           this.dataList = res.data.consignment_List.data;
-          if (res.data.consignment_List.total < res.data.consignment_List.per_page) {
+          if (
+            res.data.consignment_List.total < res.data.consignment_List.per_page
+          ) {
             this.pagination = false;
           } else {
             this.pagination = true;
@@ -94,6 +107,32 @@ export default {
     handleCurrentChanges: function(current_page) {
       this.current_page = current_page;
       this.getData();
+    },
+    //删除数组中指定元素
+    remove(arr, item) {
+      var newarr = [];
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] != item) {
+          newarr.push(arr[i]);
+        }
+      }
+      localStorage.setItem("tempArr", newarr)
+      return newarr;
+    },
+    //下架
+    deleteRow(index, row) {
+      this.$axios.post("api/admin/del_Consignment/" + row.id).then(res => {
+        if (res.data.status == 1) {
+          let id = res.data.good_id.toString();
+          console.log(id);
+          if (localStorage.getItem("tempArr")) {
+            let array = localStorage.getItem("tempArr").split(",");
+            // console.log(array); //原来缓存中的值
+            this.remove(array,id)           
+          }
+          this.getData();
+        }
+      });
     }
   }
 };

@@ -89,6 +89,7 @@ export default {
   props: ["title", "multipleSelectionAll"],
   data() {
     return {
+      tempArr: [],
       enumArr: [],
       centerDialogVisible: true,
       region: [], //地区
@@ -104,8 +105,7 @@ export default {
       props: {
         value: "id",
         label: "title",
-        children: "child",
-        disabled: "child"
+        children: "child"
       }, //转换行业数据格式
       total: 0, //总数默认为0
       currentPage: 1, //当前页默认为1
@@ -135,9 +135,7 @@ export default {
     //行业数据转换
     getList() {
       this.$axios.get("api/admin/industry").then(res => {
-        console.log(res);
         this.industry = res.data.industry;
-        console.log(this.industry);
         // if (res.status == 200) {
         //   this.enumArr = [];
         //   this.getEnumsList(res.data.industry);
@@ -227,6 +225,10 @@ export default {
     // },
     //确定提交
     onSubmit() {
+      //缓存中代购过的
+      if(localStorage.getItem("tempArr")){
+          this.tempArr = localStorage.getItem("tempArr").split(",");
+      }    
       //如果没有选择商户提醒选择商户
       if (this.form.check != "") {
         if (this.title) {
@@ -251,16 +253,13 @@ export default {
           .then(res => {
             if (res.data.status == 1) {
               //过滤已经代购的
-              for (var i = 0; i < this.multipleSelectionAll.length; i++) {
-                for (var j = 0; j < res.data.goos_List.data.length; j++) {
-                  if (
-                    res.data.goos_List.data[j].id ===
-                    this.multipleSelectionAll[i].id
-                  ) {
-                    // console.log(res.data.goos_List.data[j].id);
-                    // console.log(this.multipleSelectionAll[i].id);
-                    res.data.goos_List.data.splice(j, 1);
-                    j--;
+              if (this.tempArr) {
+                for (var i = 0; i < this.tempArr.length; i++) {
+                  for (var j = 0; j < res.data.goos_List.data.length; j++) {
+                    if (res.data.goos_List.data[j].id === parseInt(this.tempArr[i])) {
+                      res.data.goos_List.data.splice(j, 1);
+                      j--;
+                    }
                   }
                 }
               }

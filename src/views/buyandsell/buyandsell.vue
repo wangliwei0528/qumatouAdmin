@@ -1,111 +1,93 @@
 <template>
   <div>
-    <el-row class='top'>
-        <div class="breadcrumb">
-            <el-breadcrumb separator="/">
-                <el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item>
-                <el-breadcrumb-item>代购代销</el-breadcrumb-item>
-            </el-breadcrumb>
-        </div>
+    <el-row class="top">
+      <div class="breadcrumb">
+        <el-breadcrumb separator="/">
+          <el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item>
+          <el-breadcrumb-item>代购代销</el-breadcrumb-item>
+        </el-breadcrumb>
+      </div>
     </el-row>
-    <Buy @listenChild='queryData' :title='title' :multipleSelectionAll='multipleSelectionAll' ref="childMethod"/>
+    <Buy
+      @listenChild="queryData"
+      :title="title"
+      :multipleSelectionAll="multipleSelectionAll"
+      ref="childMethod"
+    />
     <el-card class="box-card">
-        <div slot="header" class='header'>
-          <span>代购商品列表</span>            
-        </div>
-        <div style='width:300px;margin-bottom:30px'>
-          <el-input 
-            placeholder="请输入内容"  
-            v-model="title"
-            @keyup.enter.native="getData()">       
-            <el-button 
-            slot="append"             
-            @click='getData()'
-            icon="el-icon-search">
-            </el-button>
-          </el-input>       
-        </div> 
-        <el-table
-          ref="table"
-          :data="tableData"
-          border
-          tooltip-effect="dark"
-          style="width: 100%"
-          :row-key="getRowKeys"
-          @selection-change="handleSelectionChange">
-          <el-table-column
-            type="selection"
-            width="55"
-            :reserve-selection="true"
-            align="center">
-          </el-table-column>
-          <el-table-column
-            prop="title"
-            label="名称"
-            align="center">
-          </el-table-column>          
-          <el-table-column
-            prop="cover"
-            label="SKU封面"
-            align="center">
-            <template slot-scope="scope">
-              <img :src="scope.row.cover" alt="" style='width:50px;height:50px'>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="cate_name"
-            label="分类"
-            align="center">
-          </el-table-column>          
-          <el-table-column
-            prop="brand_name"
-            label="品牌"
-            align="center">
-          </el-table-column>
-          <el-table-column
-            prop="price"
-            label="价格(元)"
-            align="center">
-          </el-table-column> 
-          <!-- <el-table-column
+      <div slot="header" class="header">
+        <span>代购商品列表</span>
+      </div>
+      <div style="width:300px;margin-bottom:30px">
+        <el-input placeholder="请输入内容" v-model="title" @keyup.enter.native="getData()">
+          <el-button slot="append" @click="getData()" icon="el-icon-search"></el-button>
+        </el-input>
+      </div>
+      <el-table
+        ref="table"
+        :data="tableData"
+        border
+        tooltip-effect="dark"
+        style="width: 100%"
+        :row-key="getRowKeys"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column type="selection" width="55" :reserve-selection="true" align="center"></el-table-column>
+        <el-table-column prop="title" label="名称" align="center"></el-table-column>
+        <el-table-column prop="cover" label="SKU封面" align="center">
+          <template slot-scope="scope">
+            <img :src="scope.row.cover" alt style="width:50px;height:50px">
+          </template>
+        </el-table-column>
+        <el-table-column prop="cate_name" label="分类" align="center"></el-table-column>
+        <el-table-column prop="brand_name" label="品牌" align="center"></el-table-column>
+        <el-table-column prop="price" label="价格(元)" align="center"></el-table-column>
+        <!-- <el-table-column
             prop="takeaway_itemTitle"
             label="规格值"
             align="center">
-          </el-table-column>  -->
-          <!-- <el-table-column
+        </el-table-column>-->
+        <!-- <el-table-column
             prop="quality"
             label="库存"
             align="center">
             <template slot-scope="scope">
               <el-input v-model.number="scope.row.quality" type='number' :max='scope.row.quality' :min='0'  placeholder="请输入库存" @blur='change(scope.$index, scope.row)' @keyup.enter.native="change(scope.$index, scope.row)"></el-input>
             </template>
-          </el-table-column>               -->
-        </el-table>
-        <div style='margin:20px 0;'>
-          <div style='float:right' v-if="tableData.length>10">
-            <el-pagination 
-              :page-size="pagination.pageSize"
-              @current-change="currentChange"
-              :current-page="pagination.pageNumber"
-              :page-sizes="pagination.pageSizes"
-              :total="pagination.totalRows"
-              :layout="pagination.layout"
-              @size-change='sizeChange'>
-          </el-pagination>
-          </div>
-          <div style="float:left">
-            <el-badge :value="multipleSelection.length" :max="10" :min="1"  :hidden='istrue' class="item" style='margin-right:20px'>
-               <el-button type="primary" size="small" @click="handleChooseData">批量代购</el-button>
-            </el-badge>
-            <!-- <el-checkbox @change="toggleSelect(data)" size="mini" style='margin-right:40px'>全选/反选</el-checkbox> -->
-            <el-button type="primary" size="small" @click='allPurchase'>一键代购</el-button>
-          </div>
-        </div>        
+        </el-table-column>-->
+      </el-table>
+      <div style="margin:20px 0;">
+        <div style="float:right" v-if="tableData.length>10">
+          <el-pagination
+            :page-size="pagination.pageSize"
+            @current-change="currentChange"
+            :current-page="pagination.pageNumber"
+            :page-sizes="pagination.pageSizes"
+            :total="pagination.totalRows"
+            :layout="pagination.layout"
+            @size-change="sizeChange"
+          ></el-pagination>
+        </div>
+        <div style="float:left">
+          <el-badge
+            :value="multipleSelection.length"
+            :max="10"
+            :min="1"
+            :hidden="istrue"
+            class="item"
+            style="margin-right:20px"
+          >
+            <el-button type="primary" size="small" @click="handleChooseData">批量代购</el-button>
+          </el-badge>
+          <!-- <el-checkbox @change="toggleSelect(data)" size="mini" style='margin-right:40px'>全选/反选</el-checkbox> -->
+          <el-button type="primary" size="small" @click="allPurchase">一键代购</el-button>
+        </div>
+      </div>
     </el-card>
-     <!--是否完善信息  -->
-    <div v-if='tag==0'>
-      <Mycomponent v-show='isshow'></Mycomponent>  
-    </div>  
+    <!--是否完善信息  -->
+    <div v-if="tag==0">
+      <Mycomponent v-show="isshow"></Mycomponent>
+    </div>
     <!--是否完善信息  -->
   </div>
 </template>
@@ -146,7 +128,7 @@ export default {
     };
   },
   created() {
-    this.tag = localStorage.getItem("tag"); //判断是否完善信息    
+    this.tag = localStorage.getItem("tag"); //判断是否完善信息
   },
   mounted() {},
   methods: {
@@ -174,7 +156,18 @@ export default {
                   goods_id: this.ids
                 }
               }).then(res => {
-                this.getData()
+                if (!localStorage.getItem("tempArr")) {
+                  localStorage.setItem("tempArr", this.ids);
+                } else {
+                  let ids=localStorage.getItem("tempArr").split(",")
+                  this.ids.forEach(item=>{
+                    ids.push(item.toString());
+                  })                  
+                  console.log(ids);
+                  localStorage.setItem("tempArr", ids);
+                }
+
+                this.getData();
                 this.istrue = true;
               });
             })
@@ -290,15 +283,16 @@ export default {
       this.ids = this.multipleSelection.map(item => item.id);
     },
     queryData(data) {
-      // console.log(data)
-      //以后要排除已经选择的     
-      this.tableData = data.data.goos_List.data.map(item=>{
-        item.price=item.price/100
-        return item
-      })
+      
+      this.tableData = data.data.goos_List.data.map(item => {
+        item.price = item.price / 100;
+        return item;
+      });
       this.wholes_id = data.data.wholes_id;
       this.pagination.totalRows = data.data.goos_List.total;
       this.pagination.per_page = data.data.goos_List.per_page;
+      
+      //以后要排除已经选择的
     }, // 得到选中的所有数据
     getAllSelectionData() {
       // 再执行一次记忆勾选数据匹配，目的是为了在当前页操作勾选后直接获取选中数据
