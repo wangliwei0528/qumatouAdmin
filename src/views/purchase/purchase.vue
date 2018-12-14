@@ -1,5 +1,15 @@
 <template>
   <div>
+    <!-- 头部 -->
+    <el-row class="top">
+      <div class="breadcrumb">
+        <el-breadcrumb separator="/">
+          <el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item>
+          <el-breadcrumb-item>采购商品列表</el-breadcrumb-item>
+        </el-breadcrumb>
+      </div>
+    </el-row>
+    <!-- 扫码 -->
     <el-dialog title="微信扫码支付" :visible.sync="pic" width="30%" center @close="closeDialog">
       <div style="width:220px;margin-left:50%;transform:translateX(-50%)">
         <div style="font-weight:bold">
@@ -15,6 +25,7 @@
         </div>
       </div>
     </el-dialog>
+    <!-- 新增收货地址 -->
     <el-dialog title="新增收货地址" :visible.sync="address" width="40%" center>
       <el-form
         :model="ruleForm"
@@ -71,15 +82,16 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+    <!-- 确认订单 -->
     <el-dialog title="确认订单" :visible.sync="car" width="30%" center>
       <div style="padding:0 30px 60px">
         <div style="padding-left:40px">
-          <el-select v-model="addressList.id" placeholder="请选择收获地址">
+          <el-select v-model="selectaddress" placeholder="请选择收获地址">
             <el-option
               v-for="item in addressList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item.address"
+              :label="item.address"
+              :value="item.address"
             ></el-option>
           </el-select>
           <el-button type="primary" @click="addAddress">新增收货地址</el-button>
@@ -96,7 +108,7 @@
                   <br>
                   <el-tag type="info" size="mini">{{item.takeaway_itemTitle}}</el-tag>
                   <br>
-                  <span style="color:red">单价:¥{{item.price}}</span>
+                  <span style="color:red">单价:¥{{item.distribution}}</span>
                   <!-- <span v-if='item.qty!=""'>数量:{{item.qty}}</span>
                   <span>数量:{{item.quality}}</span>-->
                 </div>
@@ -110,20 +122,14 @@
         </div>
       </div>
     </el-dialog>
-    <el-row class="top">
-      <div class="breadcrumb">
-        <el-breadcrumb separator="/">
-          <el-breadcrumb-item :to="{ path: '/home' }">欢迎页</el-breadcrumb-item>
-          <el-breadcrumb-item>采购商品列表</el-breadcrumb-item>
-        </el-breadcrumb>
-      </div>
-    </el-row>
+    <!-- 选择商户弹框 -->
     <Buy
       @listenChild="queryData"
       :title="title"
       :multipleSelectionAll="multipleSelectionAll"
       ref="childMethod"
     />
+    <!-- 搜索以及主图表格 -->
     <el-card class="box-card">
       <div slot="header" class="header">
         <span>采购商品列表</span>
@@ -151,7 +157,7 @@
         </el-table-column>
         <el-table-column prop="cate_name" label="分类" align="center"></el-table-column>
         <el-table-column prop="brand_name" label="品牌" align="center"></el-table-column>
-        <el-table-column prop="price" label="批发价(元)" align="center"></el-table-column>
+        <el-table-column prop="distribution" label="批发价(元)" align="center"></el-table-column>
         <el-table-column prop="takeaway_itemTitle" label="规格值" align="center"></el-table-column>
         <el-table-column prop="quality" label="库存" align="center"></el-table-column>
         <el-table-column prop="quality" label="采购量(件)" align="center">
@@ -220,6 +226,7 @@ export default {
       car: false, //购物车
       address: false, //新增收货地址页面
       addressList: [], //收获地址列表
+      selectaddress:'',
       select: { province: "", city: "", area: "" },
       ruleForm: {
         name: "", //收货人姓名
@@ -232,7 +239,7 @@ export default {
         status: "" //是否默认地址
       },
       rules: {
-        name: [{ required: true, message: "请输入收货人姓名" }],        
+        name: [{ required: true, message: "请输入收货人姓名" }]
       },
       total: "", //总金额
       trade_no: "", //订单编号
@@ -285,12 +292,19 @@ export default {
     },
     //提交添加地址
     submitForm(formName) {
+      let data=this[formName]
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$axios.post("api/admin/addAddress", this[formName]).then(res => {
-            console.log(res);
-            this.ruleForm = {};
-            this.address = false;
+          this.$axios.post("api/admin/addAddress", data).then(res => {
+            if (res.data.status == 1) {
+              this.ruleForm = {};
+              this.address = false;
+              // console.log(data)
+              if (data.status == 1) {
+                this.addressList.unshift(data);
+                this.selectaddress=this.addressList[0].address;//放到默认地址区域
+              }
+            }
           });
         } else {
           console.log("error submit!!");
@@ -307,6 +321,7 @@ export default {
       this.$axios.get("api/admin/defaultAddress").then(res => {
         console.log(res);
         this.addressList = res.data.defaultAddress;
+        this.selectaddress=this.addressList[0].address;//显示默认地址
       });
     },
     //新增收货地址
@@ -380,6 +395,7 @@ export default {
             }
           })
           .then(res => {
+            console.log(res)
             if (res.data.status == 1) {
               this.pic = false;
               clearInterval(this.timeName);
@@ -513,9 +529,9 @@ export default {
       }
     },
     //渲染数据data
-    queryData(data) {      
+    queryData(data) {
       this.tableData = data.data.goos_List.data.map(item => {
-        item.price = item.price / 100;
+        item.distribution = item.distribution / 100;
         return item;
       });
       this.purchase_id = data.data.purchase_id;
