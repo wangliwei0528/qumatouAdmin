@@ -15,7 +15,7 @@
         </div>
       </div>
     </el-dialog>
-    <el-dialog title="新增收货地址" :visible.sync="address" width="30%" center>
+    <el-dialog title="新增收货地址" :visible.sync="address" width="40%" center>
       <el-form
         :model="ruleForm"
         :rules="rules"
@@ -142,7 +142,7 @@
         :row-key="getRowKeys"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55" align="center"></el-table-column>
+        <el-table-column type="selection" width="55" align="center" :reserve-selection="true"></el-table-column>
         <el-table-column prop="title" label="名称" align="center"></el-table-column>
         <el-table-column prop="cover" label="SKU封面" align="center">
           <template slot-scope="scope">
@@ -184,7 +184,7 @@
         </div>
         <div style="float:left">
           <el-badge
-            :value="this.multipleSelectionAll.length?this.multipleSelectionAll.length:multipleSelection.length"
+            :value="this.multipleSelectionAll.length"
             :min="1"
             :hidden="istrue"
             class="item"
@@ -232,7 +232,7 @@ export default {
         status: "" //是否默认地址
       },
       rules: {
-        name: [{ required: true, message: "请输入收货人姓名" }]
+        name: [{ required: true, message: "请输入收货人姓名" }],        
       },
       total: "", //总金额
       trade_no: "", //订单编号
@@ -507,6 +507,7 @@ export default {
     handleSelectionChange(val) {
       // table组件选中事件,记得加上@selection-change="handleSelectionChange"
       this.multipleSelection = val ? val : [];
+      this.multipleSelectionAll = val ? val : [];
       if (this.multipleSelection.length != 0) {
         this.istrue = false;
       }

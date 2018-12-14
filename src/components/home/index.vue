@@ -132,7 +132,12 @@ li {
     </div>
     <div class="product-footer">
         <a href="javascript:" @click='go'>立即购买</a>
+        <div>
+          <input type="text" @blur='fff($event)'>
+      <button >wwwwww</button>
     </div>
+    </div>
+    
 </div>
 
 </template>
@@ -225,6 +230,9 @@ export default {
   },
   mounted() {},
   methods: {
+    fff(event){
+      console.log(event)
+    },
     specificationBtn: function(item, n, event, index) {
       var self = this;
       if (self.selectArr[n] != item) {
