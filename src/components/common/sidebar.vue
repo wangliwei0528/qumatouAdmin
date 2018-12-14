@@ -154,7 +154,7 @@ export default {
   created() {
     //条件满足 代购代销不显示
     let is_proxy = localStorage.getItem("is_proxy");    
-    if (is_proxy == 0) {
+    if (is_proxy == 1) {
       for(let i=0;i<this.menus.length;i++){
       if(this.menus[i].title==='代购代销'){
           this.menus.splice(i, 1);

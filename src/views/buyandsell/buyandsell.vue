@@ -57,12 +57,12 @@
         </el-table-column>-->
       </el-table>
       <div style="margin:20px 0;">
-        <div style="float:right" v-if="pagination.pagination">
+       <div style="float:right" v-if="pagination.pagination">
           <el-pagination
             :page-size="pagination.pageSize"
             @current-change="currentChange"
             :current-page="pagination.pageNumber"
-            :page-sizes="pagination.pageSizes"
+            :page-sizes="[per_page]"
             :total="pagination.totalRows"
             :layout="pagination.layout"
             @size-change="sizeChange"
@@ -107,13 +107,15 @@ export default {
       multipleSelection: [], // 当前页选中的数据
       idKey: "id", // 标识列表数据中每一行的唯一键的名称
       tableData: [], // 表格数据
+      paginations:false,
+      per_page: 0, //前一页
       pagination: {
-        pagination:false,
+        pagination: false,
         totalRows: 0, //总条数
-        pageSize: 10, //每页显示条数
+        // pageSize: 2, //每页显示条数
         pageSizes: [10],
         pageNumber: 1,
-        per_page: 0, //前一页
+        
         layout: "total, sizes, prev, pager, next, jumper"
       },
       title: "", //搜索
@@ -273,7 +275,7 @@ export default {
     sizeChange(val) {
       // 改变每页显示条数的时候调用一次
       this.changePageCoreRecordData();
-      this.pagination.pageSize = val;
+      // this.pagination.pageSize = val;
     },
     handleSelectionChange(val) {
       // table组件选中事件,记得加上@selection-change="handleSelectionChange"
@@ -284,21 +286,20 @@ export default {
       this.ids = this.multipleSelection.map(item => item.id);
     },
     queryData(data) {
-      
+      console.log(data)
       this.tableData = data.data.goos_List.data.map(item => {
         item.price = item.price / 100;
         return item;
       });
       this.wholes_id = data.data.wholes_id;
       // console.log(this.wholes_id)
-      if (data.data.goos_List.total < data.data.goos_List.total) {
-          this.pagination.pagination = false;
-        } else {
-          this.pagination.pagination = true;
-        }
-        this.pagination.totalRows = data.data.goos_List.total;
-           
-      this.pagination.per_page = data.data.goos_List.total;
+    if (data.data.goos_List.total < data.data.goos_List.per_page) {
+            this.pagination.pagination = false;
+          } else {
+            this.pagination.pagination = true;
+          }
+          this.pagination.totalRows = data.data.goos_List.total;
+          this.per_page = data.data.goos_List.per_page; 
     //以后要排除已经选择的
     }, // 得到选中的所有数据
     getAllSelectionData() {

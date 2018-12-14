@@ -182,7 +182,7 @@
             :page-size="pagination.pageSize"
             @current-change="currentChange"
             :current-page="pagination.pageNumber"
-            :page-sizes="pagination.pageSizes"
+            :page-sizes="[per_page]"
             :total="pagination.totalRows"
             :layout="pagination.layout"
             @size-change="sizeChange"
@@ -251,13 +251,14 @@ export default {
       multipleSelection: [], // 当前页选中的数据
       idKey: "id", // 标识列表数据中每一行的唯一键的名称
       tableData: [], // 表格数据
+      per_page: 0, //前一页
       pagination: {
         pagination: false,
         totalRows: 0, //总条数
-        pageSize: 10, //每页显示条数
+        // pageSize: 2, //每页显示条数
         pageSizes: [10],
         pageNumber: 1,
-        per_page: 0, //前一页
+        
         layout: "total, sizes, prev, pager, next, jumper"
       },
       title: "", //搜索
@@ -399,6 +400,12 @@ export default {
             if (res.data.status == 1) {
               this.pic = false;
               clearInterval(this.timeName);
+            }else{
+              this.pic = true;
+              this.$message({
+            type: "warning",
+            message: res.data.message
+          });
             }
           });
       }, 5000);
@@ -535,14 +542,13 @@ export default {
         return item;
       });
       this.purchase_id = data.data.purchase_id;
-      if (data.data.goos_List.total < data.data.goos_List.total) {
-        this.pagination.pagination = false;
-      } else {
-        this.pagination.pagination = true;
-      }
-      this.pagination.totalRows = data.data.goos_List.total;
-
-      this.pagination.per_page = data.data.goos_List.total;
+      if (data.data.goos_List.total < data.data.goos_List.per_page) {
+            this.pagination.pagination = false;
+          } else {
+            this.pagination.pagination = true;
+          }
+          this.pagination.totalRows = data.data.goos_List.total;
+          this.per_page = data.data.goos_List.per_page;      
     },
     // 得到选中的所有数据
     getAllSelectionData() {
