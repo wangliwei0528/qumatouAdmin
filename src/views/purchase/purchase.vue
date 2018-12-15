@@ -400,12 +400,6 @@ export default {
             if (res.data.status == 1) {
               this.pic = false;
               clearInterval(this.timeName);
-            }else{
-              this.pic = true;
-              this.$message({
-            type: "warning",
-            message: res.data.message
-          });
             }
           });
       }, 5000);
